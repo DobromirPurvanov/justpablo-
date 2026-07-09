@@ -9,9 +9,7 @@ const questions = [
   { id: 'period', title: 'За какъв период очаквате резултати?', type: 'radio', options: ['3 месеца', '6 месеца', '1 година', '2+ години'] },
   { id: 'needs', title: 'От какви услуги имате нужда?', subtitle: 'Можете да маркирате повече от един отговор.', type: 'checkbox', options: ['Нов уебсайт', 'SEO оптимизация', 'Онлайн реклама', 'Брандинг и дизайн', 'Социални мрежи'] },
   { id: 'budget', title: 'Какъв е предвиденият бюджет?', type: 'radio', options: ['До 500 €', '500 – 1500 €', '1500 – 2500 €', '2500 – 5000 €', 'Над 5000 €'] },
-  { id: 'name', title: 'Вашето име', type: 'text', placeholder: 'име и фамилия' },
-  { id: 'email', title: 'Вашият e-mail адрес', type: 'email', placeholder: 'email@company.bg' },
-  { id: 'phone', title: 'Телефон за връзка', type: 'tel', placeholder: '0888 123 456' },
+  { id: 'contact', title: 'Информация за контакт', subtitle: 'След като изпратите запитването, ще се запознаем с детайлите и ще се свържем с вас в рамките на 24 часа.', type: 'contact' },
 ]
 
 const categories = ['Бизнес', 'Цели', 'Ресурси', 'Изпращане']
@@ -46,6 +44,9 @@ function CategoryGlyph({ cat }: { cat: number }) {
 }
 
 const isAnswered = (data: Record<string, unknown>, id: string) => {
+  if (id === 'contact') {
+    return Boolean(data.name && String(data.name).trim() && data.email && String(data.email).trim())
+  }
   const v = data[id]
   return Array.isArray(v) ? v.length > 0 : Boolean(v && String(v).trim())
 }
@@ -141,6 +142,31 @@ export default function ScrollWizard() {
           />
           <div className="text-sm font-light text-[#1A1A1A]/60 mt-3">{q.placeholder}</div>
         </div>
+      )}
+
+      {q.type === 'contact' && (
+        <div className="flex flex-col gap-6 w-full max-w-xs mx-auto">
+          {[
+            { id: 'name', type: 'text', label: 'име и фамилия' },
+            { id: 'email', type: 'email', label: 'e-mail адрес' },
+            { id: 'phone', type: 'tel', label: 'телефон' },
+          ].map((f, i) => (
+            <div key={f.id}>
+              <input
+                type={f.type}
+                value={formData[f.id] || ''}
+                onChange={e => setValue(f.id, e.target.value)}
+                autoFocus={i === 0}
+                className="w-full bg-transparent border-b-2 border-[#DC2626] px-0 py-2 text-lg font-light text-[#1A1A1A] text-center outline-none focus-visible:outline-none"
+              />
+              <div className="text-xs font-light text-[#1A1A1A]/60 mt-2 text-center">{f.label}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {isLast && !canSubmit && (
+        <p className="text-xs font-light text-[#1A1A1A]/50 mt-6">Име и e-mail са задължителни.</p>
       )}
 
       {isLast && (
