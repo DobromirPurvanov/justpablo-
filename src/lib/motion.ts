@@ -160,3 +160,56 @@ export function countUp(el: Element, opts: { delay?: number; duration?: number; 
     onUpdate: () => { el.textContent = `${prefix}${Math.round(state.v)}${suffix}` },
   })
 }
+
+/** Заглавие изпод маска (almero scroll-trigger/title-content):
+    съдържанието се плъзга нагоре иззад невидим ръб. Идемпотентно. */
+export function maskReveal(target: Element | null, trigger: Element | null, opts: { delay?: number; duration?: number; start?: string } = {}) {
+  if (!target) return
+  let inner = target.querySelector(':scope > .mask-inner') as HTMLElement | null
+  if (!inner) {
+    inner = document.createElement('div')
+    inner.className = 'mask-inner'
+    while (target.firstChild) inner.appendChild(target.firstChild)
+    target.appendChild(inner)
+    ;(target as HTMLElement).style.overflow = 'hidden'
+  }
+  gsap.fromTo(inner,
+    { yPercent: 115 },
+    {
+      yPercent: 0,
+      duration: opts.duration ?? 0.95,
+      delay: opts.delay ?? 0,
+      ease: 'power3.out',
+      scrollTrigger: trigger ? { trigger, start: opts.start ?? 'top 85%', once: true } : undefined,
+    }
+  )
+}
+
+/** Медия, която се разкрива с clip отдолу нагоре + вътрешно отдалечаване (almero) */
+export function clipReveal(frame: Element | null, inner: Element | null, trigger: Element | null) {
+  if (!frame) return
+  const mm = gsap.matchMedia()
+  mm.add('(prefers-reduced-motion: no-preference)', () => {
+    gsap.fromTo(frame,
+      { clipPath: 'inset(0% 0% 100% 0%)' },
+      {
+        clipPath: 'inset(0% 0% 0% 0%)',
+        duration: 1.1,
+        ease: 'power3.out',
+        scrollTrigger: trigger ? { trigger, start: 'top 82%', once: true } : undefined,
+      }
+    )
+    if (inner) {
+      gsap.fromTo(inner,
+        { scale: 1.35 },
+        {
+          scale: 1.15,
+          duration: 1.3,
+          ease: 'power3.out',
+          scrollTrigger: trigger ? { trigger, start: 'top 82%', once: true } : undefined,
+        }
+      )
+    }
+  })
+  return mm
+}

@@ -16,7 +16,7 @@ export default function HeroSection() {
     const lines = titleRef.current?.querySelectorAll('.hero-line')
     if (lines) {
       tl.from(lines, {
-        y: 60, opacity: 0, duration: 1.2, stagger: 0.15, ease: 'power3.out',
+        yPercent: 112, duration: 1.1, stagger: 0.12, ease: 'power3.out',
       })
     }
     tl.from('.hero-sub', {
@@ -77,9 +77,9 @@ export default function HeroSection() {
             ref={titleRef}
             className="font-ultra-thin text-[clamp(42px,8vw,120px)] text-[#1A1A1A] leading-[1.05] max-w-3xl"
           >
-            <span className="hero-line block">Дигитален</span>
-            <span className="hero-line block">маркетинг и</span>
-            <span className="hero-line block">бизнес развитие</span>
+            <span className="block overflow-hidden"><span className="hero-line block">Дигитален</span></span>
+            <span className="block overflow-hidden"><span className="hero-line block">маркетинг и</span></span>
+            <span className="block overflow-hidden"><span className="hero-line block">бизнес развитие</span></span>
           </h1>
 
           {/* Subtitle */}

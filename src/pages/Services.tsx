@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { countUp, drift, reveal } from '../lib/motion'
+import { countUp, drift, maskReveal, reveal } from '../lib/motion'
 import NextPage from '../components/NextPage'
 import MagneticCta from '../components/MagneticCta'
 
@@ -210,8 +210,10 @@ export default function Services() {
     if (!el) return
     const ctx = gsap.context(() => {
       // Hero
-      reveal('.svc-hero-title', el.querySelector('.svc-hero'), { y: 40, duration: 1 })
-      reveal('.svc-hero-sub', el.querySelector('.svc-hero'), { y: 28, delay: 0.2 })
+      const svcHero = el.querySelector('.svc-hero')
+      reveal(el.querySelector('.svc-label'), svcHero, { y: 16, duration: 0.6 })
+      maskReveal(el.querySelector('.svc-h1'), svcHero, { delay: 0.1 })
+      reveal('.svc-hero-sub', svcHero, { y: 28, delay: 0.3 })
 
       const mmSteps = gsap.matchMedia()
 
@@ -297,8 +299,8 @@ export default function Services() {
         <div className="section-padding relative z-10">
           <div className="container-max">
             <div className="svc-hero-title max-w-3xl">
-              <span className="text-[10px] uppercase tracking-[0.2em] font-light text-[#DC2626] mb-4 block">Нашият процес</span>
-              <h1 className="font-thin-display text-[clamp(36px,5.5vw,72px)] text-[#1A1A1A] leading-[1.05] mb-8">
+              <span className="svc-label text-[10px] uppercase tracking-[0.2em] font-light text-[#DC2626] mb-4 block">Нашият процес</span>
+              <h1 className="svc-h1 font-thin-display text-[clamp(36px,5.5vw,72px)] text-[#1A1A1A] leading-[1.05] mb-8">
                 Как изглежда следващата 1 година за вашия бранд
               </h1>
             </div>

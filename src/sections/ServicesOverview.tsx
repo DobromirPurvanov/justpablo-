@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router'
 import gsap from 'gsap'
-import { reveal } from '../lib/motion'
+import { maskReveal, reveal } from '../lib/motion'
 
 const pillars = [
   {
@@ -48,7 +48,8 @@ export default function ServicesOverview() {
     const el = sectionRef.current
     if (!el) return
     const ctx = gsap.context(() => {
-      reveal('.so-title', el, { y: 40 })
+      reveal(el.querySelector('.so-label'), el, { y: 16, duration: 0.6 })
+      maskReveal(el.querySelector('.so-h2'), el, { delay: 0.1 })
       reveal('.so-circle', el, { scale: 0.94, y: 0, duration: 1 })
       reveal('.so-pillar', el, { stagger: 0.15, delay: 0.15 })
 
@@ -76,8 +77,8 @@ export default function ServicesOverview() {
       <div className="section-padding relative z-10">
         <div className="container-max">
           <div className="so-title mb-16 lg:mb-24 max-w-xl">
-            <span className="text-[10px] uppercase tracking-[0.2em] font-light text-[#DC2626]">Как работим</span>
-            <h2 className="text-[clamp(28px,4vw,48px)] font-bold text-[#1A1A1A] leading-tight mt-3">
+            <span className="so-label text-[10px] uppercase tracking-[0.2em] font-light text-[#DC2626]">Как работим</span>
+            <h2 className="so-h2 text-[clamp(28px,4vw,48px)] font-bold text-[#1A1A1A] leading-tight mt-3">
               Поемаме дигиталната трансформация на вашия бизнес
             </h2>
           </div>

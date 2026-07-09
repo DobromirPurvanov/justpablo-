@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { ArrowUpRight, Phone } from 'lucide-react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { countUp, wordsReveal } from '../lib/motion'
+import { countUp, maskReveal, wordsReveal } from '../lib/motion'
 import MagneticCta from '../components/MagneticCta'
 import NextPage from '../components/NextPage'
 
@@ -59,9 +59,9 @@ export default function Results() {
     if (!el) return
     const ctx = gsap.context(() => {
       // ── Hero: заглавие -> текст -> графика (барове растат) -> въпроси
-      const tl = gsap.timeline()
-      tl.from('.hero-title', { y: 50, opacity: 0, duration: 1, ease: 'power3.out' })
-        .from('.hero-desc', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' }, '-=0.5')
+      maskReveal(el.querySelector('.hero-title'), null, { delay: 0.05, duration: 1 })
+      const tl = gsap.timeline({ delay: 0.35 })
+      tl.from('.hero-desc', { y: 30, opacity: 0, duration: 0.8, ease: 'power3.out' })
         .from('.hero-chart', { opacity: 0, duration: 0.4 }, '-=0.4')
         .from('.chart-bar', {
           scaleY: 0, transformOrigin: '50% 100%', duration: 0.7,

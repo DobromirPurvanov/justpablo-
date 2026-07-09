@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { imageParallax, reveal } from '../lib/motion'
+import { clipReveal, imageParallax, reveal } from '../lib/motion'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -73,10 +73,10 @@ function PortfolioItem({ project }: { project: Project }) {
     const el = itemRef.current
     if (!el) return
     const ctx = gsap.context(() => {
-      reveal(el.querySelector('.pi-media'), el, { y: 44, duration: 0.9 })
-      reveal(el.querySelectorAll('.pi-detail'), el, { y: 28, stagger: 0.1, delay: 0.15 })
       const frame = el.querySelector('.pc-frame')
       const wrap = el.querySelector('.pc-imgwrap')
+      clipReveal(frame, wrap, el)
+      reveal(el.querySelectorAll('.pi-detail'), el, { y: 28, stagger: 0.1, delay: 0.25 })
       if (frame && wrap) imageParallax(wrap, frame)
 
       // Активен проект в центъра на екрана — останалите се приглушават (almero)

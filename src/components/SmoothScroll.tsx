@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react'
-import { useLocation } from 'react-router'
 import Lenis from 'lenis'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
@@ -13,7 +12,6 @@ gsap.registerPlugin(ScrollTrigger)
  */
 export default function SmoothScroll({ children }: { children: React.ReactNode }) {
   const lenisRef = useRef<Lenis | null>(null)
-  const location = useLocation()
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
@@ -36,11 +34,6 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     }
   }, [])
 
-  // При смяна на страница: моментално горе + преизчисляване на тригерите
-  useEffect(() => {
-    lenisRef.current?.scrollTo(0, { immediate: true })
-    requestAnimationFrame(() => ScrollTrigger.refresh())
-  }, [location.pathname])
 
   return <>{children}</>
 }

@@ -23,7 +23,6 @@ export default function Navbar() {
   const firstRender = useRef(true)
 
   useEffect(() => {
-    window.scrollTo(0, 0)
     setMenuOpen(false)
   }, [location.pathname])
 
