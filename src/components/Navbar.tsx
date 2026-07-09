@@ -12,11 +12,15 @@ const navLinks = [
   { path: '/zapitvane', label: 'Запитване' },
 ]
 
+/**
+ * Almero модел: на екрана стоят само лого + бургер (+ малък CTA на desktop).
+ * Менюто е събитие — тъмен цял екран с големи номерирани линкове.
+ */
 export default function Navbar() {
-  const [hidden, setHidden] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const lastScrollY = useRef(0)
   const location = useLocation()
+  const overlayRef = useRef<HTMLDivElement>(null)
+  const firstRender = useRef(true)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -24,102 +28,115 @@ export default function Navbar() {
   }, [location.pathname])
 
   useEffect(() => {
-    const handleScroll = () => {
-      const currentScrollY = window.scrollY
-      // Hide when scrolling down past hero (about 100px), show when scrolling up
-      if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
-        setHidden(true)
-      } else {
-        setHidden(false)
-      }
-      lastScrollY.current = currentScrollY
+    const ov = overlayRef.current
+    if (!ov) return
+    if (firstRender.current) {
+      gsap.set(ov, { yPercent: -100 })
+      firstRender.current = false
+      if (!menuOpen) return
     }
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
-  // GSAP animate menu items on open
-  useEffect(() => {
     if (menuOpen) {
       document.body.style.overflow = 'hidden'
+      gsap.to(ov, { yPercent: 0, duration: 0.7, ease: 'power4.inOut' })
       gsap.fromTo('.menu-item',
-        { y: 30, opacity: 0 },
-        { y: 0, opacity: 1, stagger: 0.06, duration: 0.4, ease: 'power2.out', delay: 0.15 }
+        { y: 44, opacity: 0 },
+        { y: 0, opacity: 1, stagger: 0.05, duration: 0.5, ease: 'power3.out', delay: 0.3 }
+      )
+      gsap.fromTo('.menu-foot',
+        { y: 20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.5, ease: 'power2.out', delay: 0.65 }
       )
     } else {
       document.body.style.overflow = ''
+      gsap.to(ov, { yPercent: -100, duration: 0.6, ease: 'power4.inOut' })
     }
     return () => { document.body.style.overflow = '' }
   }, [menuOpen])
 
   return (
     <>
-      {/* Fixed Logo - always visible */}
-      <Link to="/" className="fixed top-6 left-6 z-50 flex items-center gap-3">
-        <img src="/images/logo-mark.png" alt="Just Pablo Digital" className="w-11 h-11 object-contain" />
+      {/* Лого — горе вляво */}
+      <Link to="/" className="fixed top-5 left-5 lg:left-8 z-50 flex items-center gap-3" onClick={() => setMenuOpen(false)}>
+        <img src="/images/logo-mark.png" alt="Just Pablo Digital" className="w-10 h-10 lg:w-11 lg:h-11 object-contain" />
         <span className="flex flex-col leading-none">
-          <span className="text-xl font-semibold tracking-tight text-[#1A1A1A]">Just Pablo</span>
-          <span className="text-[9px] font-bold uppercase tracking-[0.32em] text-[#DC2626] mt-1">Digital</span>
+          <span className={`text-lg font-semibold tracking-tight transition-colors duration-500 ${menuOpen ? 'text-white' : 'text-[#1A1A1A]'}`}>Just Pablo</span>
+          <span className="text-[8px] font-bold uppercase tracking-[0.32em] text-[#DC2626] mt-1">Digital</span>
         </span>
       </Link>
 
-      {/* Desktop Vertical Navigation - Right Side - hides on scroll down */}
-      <nav
-        className={`fixed top-1/2 -translate-y-1/2 right-6 lg:right-10 z-40 hidden md:flex flex-col items-end gap-3 transition-all duration-500 ${
-          hidden ? 'opacity-0 translate-x-8 pointer-events-none' : 'opacity-100 translate-x-0'
-        }`}
-      >
-        {navLinks.map(link => (
-          <Link
-            key={link.path}
-            to={link.path}
-            className={`text-[12px] uppercase tracking-[0.18em] font-light transition-colors duration-300 ${
-              location.pathname === link.path
-                ? 'text-[#DC2626] font-normal'
-                : 'text-[#1A1A1A]/80 hover:text-[#1A1A1A]'
+      {/* Горе вдясно: CTA (desktop) + бургер */}
+      <div className="fixed top-5 right-5 lg:right-8 z-50 flex items-center gap-3">
+        <Link
+          to="/zapitvane"
+          className={`hidden lg:inline-flex items-center bg-[#DC2626] text-white text-[11px] uppercase tracking-[0.14em] font-medium px-5 py-3 rounded-full shadow-lg shadow-[#DC2626]/20 hover:bg-[#B91C1C] hover:scale-[1.03] transition-all duration-300 ${
+            menuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
+          }`}
+        >
+          Запитване
+        </Link>
+
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label={menuOpen ? 'Затвори менюто' : 'Отвори менюто'}
+          className="group flex items-center gap-3"
+        >
+          <span className={`hidden lg:block text-[11px] uppercase tracking-[0.22em] font-medium transition-colors duration-500 ${menuOpen ? 'text-white/80' : 'text-[#1A1A1A]/70 group-hover:text-[#1A1A1A]'}`}>
+            {menuOpen ? 'Затвори' : 'Меню'}
+          </span>
+          <span
+            className={`relative w-12 h-12 rounded-full flex items-center justify-center transition-colors duration-300 shadow-lg ${
+              menuOpen ? 'bg-white text-[#1A1A1A]' : 'bg-[#1A1A1A] text-white group-hover:bg-[#DC2626]'
             }`}
           >
-            {link.label}
-          </Link>
-        ))}
-      </nav>
+            <span className={`absolute h-[2px] w-5 bg-current rounded transition-all duration-300 ${menuOpen ? 'rotate-45' : '-translate-y-[4px]'}`} />
+            <span className={`absolute h-[2px] w-5 bg-current rounded transition-all duration-300 ${menuOpen ? '-rotate-45' : 'translate-y-[4px]'}`} />
+          </span>
+        </button>
+      </div>
 
-      {/* Mobile: Hamburger button - bottom right, always visible */}
-      <button
-        onClick={() => setMenuOpen(!menuOpen)}
-        className="fixed bottom-6 right-6 z-50 w-14 h-14 bg-[#1A1A1A] text-white rounded-full flex md:hidden items-center justify-center hover:bg-[#DC2626] transition-colors duration-300"
-      >
-        {menuOpen ? (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="6" y1="6" x2="18" y2="18" />
-            <line x1="6" y1="18" x2="18" y2="6" />
-          </svg>
-        ) : (
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <line x1="4" y1="8" x2="20" y2="8" />
-            <line x1="4" y1="16" x2="20" y2="16" />
-          </svg>
-        )}
-      </button>
-
-      {/* Mobile Fullscreen menu overlay */}
-      {menuOpen && (
-        <div className="fixed inset-0 z-40 bg-[#1A1A1A] flex items-center justify-center md:hidden">
-          <nav className="flex flex-col items-center gap-5">
-            {navLinks.map(link => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className={`menu-item text-2xl font-extralight tracking-wide transition-colors duration-300 ${
-                  location.pathname === link.path ? 'text-[#DC2626]' : 'text-white/70 hover:text-white'
-                }`}
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
+      {/* Меню — цял екран, спуска се отгоре */}
+      <div ref={overlayRef} className="fixed inset-0 z-40 bg-[#1A1A1A] flex flex-col will-change-transform">
+        <div className="flex-1 flex items-center">
+          <div className="section-padding w-full">
+            <div className="container-max">
+              <nav className="flex flex-col gap-1 lg:gap-2">
+                {navLinks.map((link, i) => {
+                  const active = location.pathname === link.path
+                  return (
+                    <Link
+                      key={link.path}
+                      to={link.path}
+                      className="menu-item group flex items-baseline gap-4 lg:gap-6 w-fit"
+                    >
+                      <span className="text-[11px] font-medium text-[#DC2626]/70 tracking-wider">{String(i + 1).padStart(2, '0')}</span>
+                      <span
+                        className={`text-[clamp(30px,6vw,60px)] font-extralight leading-[1.15] tracking-tight transition-all duration-300 group-hover:translate-x-2 ${
+                          active ? 'text-[#DC2626]' : 'text-white/80 group-hover:text-white'
+                        }`}
+                      >
+                        {link.label}
+                      </span>
+                    </Link>
+                  )
+                })}
+              </nav>
+            </div>
+          </div>
         </div>
-      )}
+
+        {/* Контакти в основата на менюто */}
+        <div className="menu-foot border-t border-white/10">
+          <div className="section-padding py-6">
+            <div className="container-max flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm font-light">
+              <div className="flex items-center gap-6">
+                <a href="mailto:info@justpablo.bg" className="text-[#DC2626] hover:text-white transition-colors">info@justpablo.bg</a>
+                <a href="tel:0887654321" className="text-white/60 hover:text-white transition-colors">0887 654 321</a>
+              </div>
+              <div className="text-white/40 text-xs uppercase tracking-[0.15em]">Варна — ул. Мария Луиза 47</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </>
   )
 }
