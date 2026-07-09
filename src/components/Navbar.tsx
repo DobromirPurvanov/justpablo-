@@ -27,16 +27,24 @@ export default function Navbar() {
     setMenuOpen(false)
   }, [location.pathname])
 
+  // Escape затваря менюто
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMenuOpen(false) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
   useEffect(() => {
     const ov = overlayRef.current
     if (!ov) return
     if (firstRender.current) {
-      gsap.set(ov, { yPercent: -100 })
+      gsap.set(ov, { yPercent: -100, autoAlpha: 0 })
       firstRender.current = false
       if (!menuOpen) return
     }
     if (menuOpen) {
       document.body.style.overflow = 'hidden'
+      gsap.set(ov, { autoAlpha: 1 })
       gsap.to(ov, { yPercent: 0, duration: 0.7, ease: 'power4.inOut' })
       gsap.fromTo('.menu-item',
         { y: 44, opacity: 0 },
@@ -48,7 +56,7 @@ export default function Navbar() {
       )
     } else {
       document.body.style.overflow = ''
-      gsap.to(ov, { yPercent: -100, duration: 0.6, ease: 'power4.inOut' })
+      gsap.to(ov, { yPercent: -100, duration: 0.6, ease: 'power4.inOut', onComplete: () => gsap.set(ov, { autoAlpha: 0 }) })
     }
     return () => { document.body.style.overflow = '' }
   }, [menuOpen])
@@ -60,7 +68,7 @@ export default function Navbar() {
         <img src="/images/logo-mark.png" alt="Just Pablo Digital" className="w-10 h-10 lg:w-11 lg:h-11 object-contain" />
         <span className="flex flex-col leading-none">
           <span className="text-lg font-semibold tracking-tight text-[#1A1A1A]">Just Pablo</span>
-          <span className="text-[8px] font-bold uppercase tracking-[0.32em] text-[#DC2626] mt-1">Digital</span>
+          <span className="text-[8px] font-bold uppercase tracking-[0.3em] text-[#DC2626] mt-1" style={{ fontSize: 9 }}>Digital</span>
         </span>
       </Link>
 
@@ -94,7 +102,7 @@ export default function Navbar() {
       </div>
 
       {/* Меню — цял екран, спуска се отгоре */}
-      <div ref={overlayRef} className="fixed inset-0 z-40 bg-white flex flex-col will-change-transform">
+      <div ref={overlayRef} aria-hidden={!menuOpen} className="fixed inset-0 z-40 bg-white flex flex-col will-change-transform">
         <div className="flex-1 flex items-center">
           <div className="section-padding w-full">
             <div className="container-max">
@@ -128,7 +136,7 @@ export default function Navbar() {
                 <a href="mailto:info@justpablo.bg" className="text-[#DC2626] hover:text-white transition-colors">info@justpablo.bg</a>
                 <a href="tel:0887654321" className="text-[#1A1A1A]/60 hover:text-[#1A1A1A] transition-colors">0887 654 321</a>
               </div>
-              <div className="text-[#1A1A1A]/40 text-xs uppercase tracking-[0.15em]">Варна — ул. Мария Луиза 47</div>
+              <div className="text-[#1A1A1A]/55 text-xs uppercase tracking-[0.15em]">Варна — ул. Мария Луиза 47</div>
             </div>
           </div>
         </div>

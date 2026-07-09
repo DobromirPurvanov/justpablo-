@@ -7,7 +7,7 @@ export default function NextPage({ to, label }: { to: string; label: string }) {
       <Link to={to} data-cursor="Напред" className="group block section-padding py-14 lg:py-20">
         <div className="container-max flex items-center justify-between gap-8">
           <div>
-            <div className="text-[10px] uppercase tracking-[0.22em] font-light text-[#1A1A1A]/40 mb-4 flex items-center gap-3">
+            <div className="text-[10px] uppercase tracking-[0.22em] font-light text-[#1A1A1A]/55 mb-4 flex items-center gap-3">
               <span className="w-2 h-2 rounded-full bg-[#DC2626]" />
               Следваща страница
             </div>

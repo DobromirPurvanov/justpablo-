@@ -51,15 +51,15 @@ export default function ScrollWizard() {
             {/* Left: Question list */}
             <div className="lg:col-span-3 hidden lg:block pt-4">
               <div className="flex flex-col gap-5 mb-8">
-                <div className={`text-sm font-medium ${current < 4 ? 'text-[#DC2626]' : 'text-[#1A1A1A]/30'}`}><span className="mr-2">1</span>Бизнес</div>
-                <div className={`text-sm font-medium ${current >= 4 && current < 7 ? 'text-[#DC2626]' : 'text-[#1A1A1A]/30'}`}><span className="mr-2">2</span>Цели</div>
-                <div className={`text-sm font-medium ${current >= 7 && current < 9 ? 'text-[#DC2626]' : 'text-[#1A1A1A]/30'}`}><span className="mr-2">3</span>Ресурси</div>
-                <div className={`text-sm font-medium ${current >= 9 ? 'text-[#DC2626]' : 'text-[#1A1A1A]/30'}`}><span className="mr-2">4</span>Изпращане</div>
+                <div className={`text-sm font-medium ${current < 4 ? 'text-[#DC2626]' : 'text-[#1A1A1A]/50'}`}><span className="mr-2">1</span>Бизнес</div>
+                <div className={`text-sm font-medium ${current >= 4 && current < 7 ? 'text-[#DC2626]' : 'text-[#1A1A1A]/50'}`}><span className="mr-2">2</span>Цели</div>
+                <div className={`text-sm font-medium ${current >= 7 && current < 9 ? 'text-[#DC2626]' : 'text-[#1A1A1A]/50'}`}><span className="mr-2">3</span>Ресурси</div>
+                <div className={`text-sm font-medium ${current >= 9 ? 'text-[#DC2626]' : 'text-[#1A1A1A]/50'}`}><span className="mr-2">4</span>Изпращане</div>
               </div>
               <div className="flex flex-col gap-2.5">
                 {questions.map((question, i) => (
                   <button key={question.id} onClick={() => setCurrent(i)}
-                    className={`text-left text-sm leading-snug transition-colors ${i === current ? 'text-[#1A1A1A] font-semibold' : i < current ? 'text-[#1A1A1A]/40' : 'text-[#1A1A1A]/20'}`}>
+                    className={`text-left text-sm leading-snug transition-colors ${i === current ? 'text-[#1A1A1A] font-semibold' : i < current ? 'text-[#1A1A1A]/55' : 'text-[#1A1A1A]/35'}`}>
                     {question.title}
                   </button>
                 ))}
@@ -109,12 +109,12 @@ export default function ScrollWizard() {
 
                 {(q.type === 'text' || q.type === 'email' || q.type === 'tel') && (
                   <input type={q.type} value={formData[q.id] || ''} onChange={e => setValue(q.id, e.target.value)} placeholder={q.placeholder}
-                    className="w-full bg-transparent border-b-2 border-[#DC2626] px-0 py-4 text-xl font-light text-[#1A1A1A] outline-none placeholder:text-[#1A1A1A]/30" />
+                    className="w-full bg-transparent border-b-2 border-[#DC2626] px-0 py-4 text-xl font-light text-[#1A1A1A] outline-none placeholder:text-[#1A1A1A]/50" />
                 )}
 
                 {q.type === 'textarea' && (
                   <textarea value={formData[q.id] || ''} onChange={e => setValue(q.id, e.target.value)} placeholder={q.placeholder} rows={4}
-                    className="w-full bg-transparent border-b-2 border-[#DC2626] px-0 py-4 text-lg font-light text-[#1A1A1A] outline-none placeholder:text-[#1A1A1A]/30 resize-none" />
+                    className="w-full bg-transparent border-b-2 border-[#DC2626] px-0 py-4 text-lg font-light text-[#1A1A1A] outline-none placeholder:text-[#1A1A1A]/50 resize-none" />
                 )}
               </div>
 
@@ -152,7 +152,7 @@ export default function ScrollWizard() {
                 </button>
                 {!isFirst && (
                   <button onClick={prev}
-                    className="absolute top-3 left-1/2 -translate-x-1/2 w-9 h-9 rounded-full border border-[#1A1A1A]/20 flex items-center justify-center text-[#1A1A1A]/40 hover:text-[#DC2626] hover:border-[#DC2626] transition-all">
+                    className="absolute top-3 left-1/2 -translate-x-1/2 w-9 h-9 rounded-full border border-[#1A1A1A]/20 flex items-center justify-center text-[#1A1A1A]/55 hover:text-[#DC2626] hover:border-[#DC2626] transition-all">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
                   </button>
                 )}

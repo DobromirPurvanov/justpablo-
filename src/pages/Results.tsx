@@ -147,7 +147,8 @@ export default function Results() {
                     <li key={i}>
                       <button
                         onClick={() => setOpenQ(openQ === i ? null : i)}
-                        className={`text-left text-base font-medium transition-colors duration-300 ${openQ === i ? 'text-[#DC2626]' : 'text-[#1A1A1A]/80 hover:text-[#DC2626]'}`}
+                        aria-expanded={openQ === i}
+                        className={`block w-full text-left text-base font-medium py-2.5 transition-colors duration-300 ${openQ === i ? 'text-[#DC2626]' : 'text-[#1A1A1A]/80 hover:text-[#DC2626]'}`}
                       >
                         {item.q}
                       </button>
@@ -229,7 +230,7 @@ export default function Results() {
             </div>
 
             {/* Хедър на таблицата — desktop */}
-            <div className="hidden lg:grid grid-cols-12 gap-6 pb-4 border-b border-[#1A1A1A]/10 text-[10px] uppercase tracking-[0.18em] font-medium text-[#1A1A1A]/40">
+            <div className="hidden lg:grid grid-cols-12 gap-6 pb-4 border-b border-[#1A1A1A]/10 text-[10px] uppercase tracking-[0.18em] font-medium text-[#1A1A1A]/55">
               <div className="col-span-3">Клиент</div>
               <div className="col-span-3">Дейност</div>
               <div className="col-span-4">Стратегия</div>
@@ -243,7 +244,7 @@ export default function Results() {
                   <div className="text-xs font-light text-[#1A1A1A]/50 mt-1">{c.business}</div>
                 </div>
                 <div className="case-cell lg:col-span-3">
-                  <div className="lg:hidden text-[10px] uppercase tracking-[0.18em] font-medium text-[#1A1A1A]/40 mb-2">Дейност</div>
+                  <div className="lg:hidden text-[10px] uppercase tracking-[0.18em] font-medium text-[#1A1A1A]/55 mb-2">Дейност</div>
                   <ul className="flex flex-col gap-2">
                     {c.bullets.map(b => (
                       <li key={b} className="flex items-start gap-2 text-sm font-light text-[#1A1A1A]/75 leading-snug">
@@ -253,7 +254,7 @@ export default function Results() {
                   </ul>
                 </div>
                 <div className="case-cell lg:col-span-4">
-                  <div className="lg:hidden text-[10px] uppercase tracking-[0.18em] font-medium text-[#1A1A1A]/40 mb-2">Стратегия</div>
+                  <div className="lg:hidden text-[10px] uppercase tracking-[0.18em] font-medium text-[#1A1A1A]/55 mb-2">Стратегия</div>
                   <p className="text-sm font-light text-[#1A1A1A]/70 leading-relaxed">{c.strategy}</p>
                 </div>
                 <div className="case-cell lg:col-span-2 lg:text-right">

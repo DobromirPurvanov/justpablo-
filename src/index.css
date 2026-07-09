@@ -159,3 +159,14 @@
 @media (prefers-reduced-motion: reduce) {
   .ring-a, .ring-b, .ring-c { animation: none; }
 }
+
+/* === UX одит: достъпност и touch === */
+:focus-visible {
+  outline: 2px solid #DC2626;
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+body {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}

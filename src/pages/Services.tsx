@@ -341,7 +341,7 @@ export default function Services() {
                       <div className="ph-anim grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
                         {phase.services.map((svc) => (
                           <div key={svc.name} className="flex flex-col items-start group">
-                            <img src={svc.icon} alt={svc.name} className="w-9 h-9 object-contain mb-3 group-hover:scale-110 transition-transform duration-300" />
+                            <img src={svc.icon} alt={svc.name} loading="lazy" decoding="async" className="w-9 h-9 object-contain mb-3 group-hover:scale-110 transition-transform duration-300" />
                             <span className="text-xs lg:text-sm font-bold text-[#1A1A1A] leading-tight">{svc.name}</span>
                           </div>
                         ))}

@@ -83,7 +83,7 @@ export default function HeroSection() {
           </h1>
 
           {/* Subtitle */}
-          <p className="hero-sub mt-8 text-base lg:text-lg font-light text-[#1A1A1A]/40 max-w-md leading-relaxed pr-16 md:pr-0">
+          <p className="hero-sub mt-8 text-base lg:text-lg font-light text-[#1A1A1A]/55 max-w-md leading-relaxed pr-16 md:pr-0">
             JustPablo помага на бизнеса да растете онлайн с ясна стратегия и измерими резултати.
           </p>
 

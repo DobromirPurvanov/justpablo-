@@ -51,7 +51,7 @@ export default function ProjectSlotsPopup() {
         </div>
         <ArrowRight
           size={14}
-          className="text-white/40 group-hover:text-white group-hover:translate-x-1 transition-all"
+          className="text-white/60 group-hover:text-white group-hover:translate-x-1 transition-all"
         />
       </button>
 
@@ -115,7 +115,7 @@ export default function ProjectSlotsPopup() {
                     <h3 className="text-base font-bold text-[#1A1A1A] group-hover:text-white mb-1 transition-colors">
                       {slot.label}
                     </h3>
-                    <span className="text-[10px] font-medium text-[#1A1A1A]/40 group-hover:text-white/60 uppercase tracking-wider transition-colors">
+                    <span className="text-[10px] font-medium text-[#1A1A1A]/55 group-hover:text-white/60 uppercase tracking-wider transition-colors">
                       {slot.status}
                     </span>
                     <ArrowRight
@@ -137,7 +137,7 @@ export default function ProjectSlotsPopup() {
                 Запази своя слот
                 <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
               </Link>
-              <p className="text-xs font-light text-[#1A1A1A]/40 text-center mt-4">
+              <p className="text-xs font-light text-[#1A1A1A]/55 text-center mt-4">
                 След запитване ще се свържем с вас в рамките на 24 часа.
               </p>
             </div>

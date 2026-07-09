@@ -119,10 +119,10 @@ export default function Pricing() {
                 <div key={plan.name} className={`bg-white rounded-3xl p-8 lg:p-10 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-400 relative overflow-hidden ${plan.popular ? 'ring-2 ring-[#9BFF00]' : ''}`}>
                   {plan.popular && <div className="absolute top-0 right-0 bg-[#9BFF00] text-[#1A1A1A] text-[10px] font-bold px-4 py-2 rounded-bl-2xl uppercase tracking-wider">Препоръчителен</div>}
                   <div className="w-full h-1 rounded-full mb-8" style={{ backgroundColor: plan.accent }} />
-                  <div className="text-xs font-light uppercase tracking-wider text-[#1A1A1A]/30 mb-2">{plan.name}</div>
+                  <div className="text-xs font-light uppercase tracking-wider text-[#1A1A1A]/50 mb-2">{plan.name}</div>
                   <div className="text-4xl lg:text-5xl font-extralight text-[#1A1A1A] mb-1">{plan.price}</div>
-                  {plan.priceBgn && <div className="text-sm font-light text-[#1A1A1A]/40 mb-1">{plan.priceBgn}</div>}
-                  <div className="text-xs font-light text-[#1A1A1A]/30 mb-8 uppercase tracking-wider">{plan.period}</div>
+                  {plan.priceBgn && <div className="text-sm font-light text-[#1A1A1A]/55 mb-1">{plan.priceBgn}</div>}
+                  <div className="text-xs font-light text-[#1A1A1A]/50 mb-8 uppercase tracking-wider">{plan.period}</div>
                   <div className="flex flex-col gap-2.5 mb-8">
                     {plan.features.map(f => (
                       <div key={f} className="flex items-start gap-3">
@@ -162,7 +162,7 @@ export default function Pricing() {
                   <span className="text-sm font-light text-[#1A1A1A]">{s.name}</span>
                   <span className="text-right shrink-0 pl-4">
                     <span className="block text-sm font-medium text-[#DC2626]">{s.from}</span>
-                    {s.fromBgn && <span className="block text-[11px] font-light text-[#1A1A1A]/35 mt-0.5">{s.fromBgn}</span>}
+                    {s.fromBgn && <span className="block text-[11px] font-light text-[#1A1A1A]/50 mt-0.5">{s.fromBgn}</span>}
                   </span>
                 </div>
               ))}
@@ -185,7 +185,7 @@ export default function Pricing() {
                   <span className="text-sm font-light text-[#1A1A1A]">{s.name}</span>
                   <span className="text-right shrink-0 pl-4">
                     <span className="block text-sm font-medium text-[#DC2626]">{s.from}</span>
-                    {s.fromBgn && <span className="block text-[11px] font-light text-[#1A1A1A]/35 mt-0.5">{s.fromBgn}</span>}
+                    {s.fromBgn && <span className="block text-[11px] font-light text-[#1A1A1A]/50 mt-0.5">{s.fromBgn}</span>}
                   </span>
                 </div>
               ))}
@@ -220,7 +220,7 @@ export default function Pricing() {
         <div className="section-padding">
           <div className="container-max text-center">
             <h2 className="font-thin-display text-[clamp(32px,5vw,60px)] text-white mb-8">Всичко започва от едно място</h2>
-            <p className="text-base font-light text-white/40 mb-8 max-w-xl mx-auto">Premium Digital Analysis — 485 € ({bgn(485)}). Единствената публична цена.</p>
+            <p className="text-base font-light text-white/60 mb-8 max-w-xl mx-auto">Premium Digital Analysis — 485 € ({bgn(485)}). Единствената публична цена.</p>
             <Link to="/zapitvane" className="inline-flex items-center gap-3 bg-[#DC2626] text-white px-10 py-5 rounded-full text-lg font-medium hover:bg-[#E64922] hover:scale-[1.02] transition-all duration-300">
               Заяви Дигитален Анализ <ArrowRight size={22} />
             </Link>

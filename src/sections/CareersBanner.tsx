@@ -72,7 +72,7 @@ export default function CareersBanner() {
                   </span>
                   <ArrowRight
                     size={16}
-                    className="text-[#1A1A1A]/20 group-hover:text-[#DC2626] group-hover:translate-x-1 transition-all"
+                    className="text-[#1A1A1A]/50 group-hover:text-[#DC2626] group-hover:translate-x-1 transition-all"
                   />
                 </div>
                 <h3 className="text-base font-bold text-[#1A1A1A] mb-1 group-hover:text-[#DC2626] transition-colors">
@@ -85,7 +85,7 @@ export default function CareersBanner() {
                   {pos.tags.map(tag => (
                     <span
                       key={tag}
-                      className="text-[10px] font-medium text-[#1A1A1A]/40 bg-[#F5F5F5] px-2 py-0.5 rounded"
+                      className="text-[10px] font-medium text-[#1A1A1A]/55 bg-[#F5F5F5] px-2 py-0.5 rounded"
                     >
                       {tag}
                     </span>

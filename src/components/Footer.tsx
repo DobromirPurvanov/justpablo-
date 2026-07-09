@@ -21,7 +21,7 @@ export default function Footer() {
             {/* Left: Logo + Nav */}
             <div className="lg:col-span-3">
               <Link to="/" className="inline-flex items-center gap-3 mb-8">
-                <img src="/images/logo-mark-white.png" alt="Just Pablo Digital" className="w-9 h-9 object-contain" />
+                <img src="/images/logo-mark-white.png" alt="Just Pablo Digital" loading="lazy" decoding="async" className="w-9 h-9 object-contain" />
                 <span className="flex flex-col leading-none">
                   <span className="text-lg font-semibold text-white">Just Pablo</span>
                   <span className="text-[8px] font-bold uppercase tracking-[0.32em] text-[#DC2626] mt-1">Digital</span>
@@ -112,17 +112,17 @@ export default function Footer() {
       <div className="border-t border-white/10">
         <div className="section-padding py-6">
           <div className="container-max flex flex-col md:flex-row items-center justify-between gap-4">
-            <p className="text-[10px] uppercase tracking-[0.15em] font-light text-white/40">
+            <p className="text-[10px] uppercase tracking-[0.15em] font-light text-white/60">
               © JustPablo — всички права запазени.
             </p>
             <div className="flex items-center gap-4 md:gap-6">
-              <Link to="/biskvitki" className="text-[10px] uppercase tracking-[0.15em] font-light text-white/40 hover:text-white/60 transition-colors">
+              <Link to="/biskvitki" className="text-[10px] uppercase tracking-[0.15em] font-light text-white/60 hover:text-white/60 transition-colors">
                 Бисквитки
               </Link>
-              <Link to="/poveritelnost" className="text-[10px] uppercase tracking-[0.15em] font-light text-white/40 hover:text-white/60 transition-colors">
+              <Link to="/poveritelnost" className="text-[10px] uppercase tracking-[0.15em] font-light text-white/60 hover:text-white/60 transition-colors">
                 Поверителност
               </Link>
-              <Link to="/usloviya" className="text-[10px] uppercase tracking-[0.15em] font-light text-white/40 hover:text-white/60 transition-colors">
+              <Link to="/usloviya" className="text-[10px] uppercase tracking-[0.15em] font-light text-white/60 hover:text-white/60 transition-colors">
                 Условия за ползване
               </Link>
             </div>

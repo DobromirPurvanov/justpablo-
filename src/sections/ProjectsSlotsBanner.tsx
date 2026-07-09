@@ -55,7 +55,7 @@ export default function ProjectsSlotsBanner() {
                 <h3 className="text-sm lg:text-base font-bold text-white group-hover:text-white mb-1 transition-colors">
                   {slot.label}
                 </h3>
-                <span className="text-[10px] lg:text-xs font-light text-white/40 group-hover:text-white/70 uppercase tracking-wider transition-colors">
+                <span className="text-[10px] lg:text-xs font-light text-white/60 group-hover:text-white/70 uppercase tracking-wider transition-colors">
                   {slot.status}
                 </span>
 
@@ -68,7 +68,7 @@ export default function ProjectsSlotsBanner() {
           </div>
 
           {/* Bottom note */}
-          <p className="text-sm font-light text-white/40 mt-8 max-w-xl">
+          <p className="text-sm font-light text-white/60 mt-8 max-w-xl">
             Всеки месец приемаме ограничен брой нови клиенти, за да гарантираме качеството на работата. 
             Запази своя слот преди да са заети всички места.
           </p>

@@ -48,6 +48,7 @@ export default function CustomCursor() {
   return (
     <div
       ref={dotRef}
+      aria-hidden="true"
       className="fixed top-0 left-0 z-[70] pointer-events-none hidden lg:flex items-center justify-center w-24 h-24 rounded-full bg-[#DC2626] shadow-xl shadow-[#DC2626]/30"
       style={{ transform: 'translate(-50%, -50%) scale(0)' }}
     >

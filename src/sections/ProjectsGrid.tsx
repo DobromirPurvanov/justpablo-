@@ -104,6 +104,8 @@ function PortfolioItem({ project }: { project: Project }) {
                   <img
                     src={project.image}
                     alt={project.name}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                 )}
@@ -139,7 +141,7 @@ function PortfolioItem({ project }: { project: Project }) {
 
           {/* Детайли — залепени, докато медията минава (pin ефектът им) */}
           <div className="lg:col-span-4 lg:sticky lg:top-[26vh]">
-            <div className="pi-detail text-[10px] uppercase tracking-[0.2em] font-light text-[#1A1A1A]/40 mb-3">
+            <div className="pi-detail text-[10px] uppercase tracking-[0.2em] font-light text-[#1A1A1A]/55 mb-3">
               {project.category}
             </div>
             <p className="pi-detail text-base lg:text-lg font-light text-[#1A1A1A]/75 leading-relaxed max-w-sm">

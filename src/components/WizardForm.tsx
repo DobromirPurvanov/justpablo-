@@ -195,7 +195,7 @@ export default function WizardForm() {
               key={step.name}
               onClick={() => { setStepIndex(i); setQuestionIndex(0) }}
               className={`text-left text-sm font-medium transition-colors duration-300 flex items-baseline gap-2 ${
-                i === stepIndex ? 'text-[#DC2626]' : i < stepIndex ? 'text-[#1A1A1A]/70' : 'text-[#1A1A1A]/20'
+                i === stepIndex ? 'text-[#DC2626]' : i < stepIndex ? 'text-[#1A1A1A]/70' : 'text-[#1A1A1A]/35'
               }`}
             >
               <span className="text-xs">{i + 1}</span>{step.name}
@@ -213,7 +213,7 @@ export default function WizardForm() {
                 i === currentGlobalIndex
                   ? 'text-[#1A1A1A]'
                   : i < currentGlobalIndex
-                  ? 'text-[#1A1A1A]/20'
+                  ? 'text-[#1A1A1A]/35'
                   : 'text-[#1A1A1A]/10'
               }`}
             >
@@ -321,7 +321,7 @@ export default function WizardForm() {
                 onChange={e => setValue(currentQuestion.id, e.target.value)}
                 placeholder={currentQuestion.placeholder}
                 rows={4}
-                className="w-full bg-transparent border-b-2 border-[#1A1A1A] px-0 py-4 text-lg font-light text-[#1A1A1A] outline-none placeholder:text-[#1A1A1A]/20 resize-none"
+                className="w-full bg-transparent border-b-2 border-[#1A1A1A] px-0 py-4 text-lg font-light text-[#1A1A1A] outline-none placeholder:text-[#1A1A1A]/50 resize-none"
               />
             )}
 
@@ -340,7 +340,7 @@ export default function WizardForm() {
                       value={formData[field.id] || ''}
                       onChange={e => setValue(field.id, e.target.value)}
                       placeholder={field.placeholder}
-                      className="w-full bg-transparent border-b-2 border-[#1A1A1A] px-0 py-3 text-lg font-light text-[#1A1A1A] outline-none placeholder:text-[#1A1A1A]/20"
+                      className="w-full bg-transparent border-b-2 border-[#1A1A1A] px-0 py-3 text-lg font-light text-[#1A1A1A] outline-none placeholder:text-[#1A1A1A]/35"
                     />
                   </div>
                 ))}
@@ -399,7 +399,7 @@ export default function WizardForm() {
           <button
             onClick={goPrev}
             disabled={isFirstStep}
-            className={`text-xs uppercase tracking-wider font-light ${isFirstStep ? 'text-[#1A1A1A]/20' : 'text-[#1A1A1A]/70'}`}
+            className={`text-xs uppercase tracking-wider font-light ${isFirstStep ? 'text-[#1A1A1A]/35' : 'text-[#1A1A1A]/70'}`}
           >
             ← Предишен
           </button>

@@ -135,12 +135,12 @@ export default function Strategy() {
                       <div>
                         <div className="text-[10px] uppercase tracking-[0.2em] font-light mb-3" style={{ color: roadmap.color }}>{roadmap.phase}</div>
                         <h2 className="text-2xl lg:text-3xl font-light text-[#1A1A1A] mb-2">{roadmap.title}</h2>
-                        <p className="text-sm font-light text-[#1A1A1A]/40">{roadmap.subtitle}</p>
+                        <p className="text-sm font-light text-[#1A1A1A]/55">{roadmap.subtitle}</p>
                       </div>
                       <div className="mt-6">
                         <div className="text-3xl lg:text-4xl font-extralight" style={{ color: roadmap.color }}>{roadmap.price}</div>
-                        {roadmap.priceBgn && <div className="text-sm font-light text-[#1A1A1A]/40 mt-1">{roadmap.priceBgn}</div>}
-                        <div className="text-xs font-light text-[#1A1A1A]/30 mt-1 uppercase tracking-wider">{roadmap.period}</div>
+                        {roadmap.priceBgn && <div className="text-sm font-light text-[#1A1A1A]/55 mt-1">{roadmap.priceBgn}</div>}
+                        <div className="text-xs font-light text-[#1A1A1A]/50 mt-1 uppercase tracking-wider">{roadmap.period}</div>
                       </div>
                     </div>
 
@@ -178,7 +178,7 @@ export default function Strategy() {
                   </div>
                   <div>
                     <div className="text-2xl font-extralight text-[#1A1A1A] mb-1">{d.discount}</div>
-                    <div className="text-sm font-light text-[#1A1A1A]/40">{d.description}</div>
+                    <div className="text-sm font-light text-[#1A1A1A]/55">{d.description}</div>
                   </div>
                 </div>
               ))}
@@ -194,7 +194,7 @@ export default function Strategy() {
             <h2 className="font-thin-display text-[clamp(32px,5vw,60px)] text-white mb-8">
               Всичко започва от едно място
             </h2>
-            <p className="text-base font-light text-white/40 mb-8 max-w-xl mx-auto">
+            <p className="text-base font-light text-white/60 mb-8 max-w-xl mx-auto">
               Premium Digital Analysis — 485 € ({bgn(485)}). Единствената публична цена. Задължителен етап за всички клиенти.
             </p>
             <Link to="/zapitvane" className="inline-flex items-center gap-3 bg-[#DC2626] text-white px-10 py-5 rounded-full text-lg font-medium hover:bg-[#E64922] hover:scale-[1.02] transition-all duration-300">
