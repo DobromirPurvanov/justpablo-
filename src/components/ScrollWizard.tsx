@@ -74,7 +74,7 @@ export default function ScrollWizard() {
 
   /* ─── Отговорът (вътре в кръга на desktop / плоско на мобилно) ─── */
   const answerArea = (
-    <div className="w-full max-w-sm mx-auto text-center">
+    <div className="w-full max-w-md mx-auto text-center">
       {(q.type === 'radio' || q.type === 'checkbox') && q.options && (
         <div className="flex flex-col items-center gap-4">
           {q.options.map(opt => {
@@ -92,7 +92,7 @@ export default function ScrollWizard() {
                     <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </span>
-                <span className={`text-base lg:text-lg font-bold transition-colors duration-300 ${selected ? 'text-[#1A1A1A]' : 'text-[#1A1A1A]/75 group-hover:text-[#1A1A1A]'}`}>
+                <span className={`text-lg lg:text-xl font-bold transition-colors duration-300 ${selected ? 'text-[#1A1A1A]' : 'text-[#1A1A1A]/75 group-hover:text-[#1A1A1A]'}`}>
                   {opt}
                 </span>
               </button>
@@ -109,9 +109,9 @@ export default function ScrollWizard() {
             onChange={e => setValue(q.id, e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter' && !isLast) next() }}
             autoFocus
-            className="w-full bg-transparent border-b-2 border-[#DC2626] px-0 py-3 text-lg lg:text-xl font-light text-[#1A1A1A] text-center outline-none"
+            className="w-full bg-transparent border-b-2 border-[#DC2626] px-0 py-3 text-xl lg:text-2xl font-light text-[#1A1A1A] text-center outline-none focus-visible:outline-none"
           />
-          <div className="text-sm font-light text-[#1A1A1A]/55 mt-2">{q.placeholder}</div>
+          <div className="text-sm font-light text-[#1A1A1A]/60 mt-3">{q.placeholder}</div>
         </div>
       )}
 
@@ -185,7 +185,7 @@ export default function ScrollWizard() {
 
   /* ─── Wizard: активен въпрос + призрачни идващи + кръгът сцена ─── */
   return (
-    <div ref={rootRef} className="bg-white min-h-[92vh] py-10 lg:py-14">
+    <div ref={rootRef} className="bg-white min-h-[92vh] py-8 lg:py-10 overflow-x-clip">
       <div className="section-padding">
         <div className="container-max">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
@@ -202,15 +202,15 @@ export default function ScrollWizard() {
 
             {/* Въпросите: активният тъмен, идващите прозират */}
             <div className="lg:col-span-4">
-              <div className="wz-anim flex flex-col gap-7 lg:pt-6">
-                <h2 className="wz-h1 text-[clamp(24px,2.6vw,36px)] font-bold text-[#1A1A1A] leading-tight">
+              <div className="wz-anim flex flex-col gap-8 lg:pt-4">
+                <h2 className="wz-h1 text-[clamp(26px,3vw,42px)] font-bold text-[#1A1A1A] leading-tight">
                   {q.title}
                 </h2>
                 {questions.slice(current + 1, current + 5).map(uq => (
                   <button
                     key={uq.id}
                     onClick={() => go(questions.indexOf(uq))}
-                    className="text-left text-[clamp(20px,2.2vw,30px)] font-bold text-[#1A1A1A]/[0.12] leading-tight hover:text-[#1A1A1A]/30 transition-colors duration-300"
+                    className="text-left text-[clamp(22px,2.6vw,34px)] font-bold text-[#1A1A1A]/[0.12] leading-tight hover:text-[#1A1A1A]/30 transition-colors duration-300"
                   >
                     {uq.title}
                   </button>
@@ -223,8 +223,8 @@ export default function ScrollWizard() {
             </div>
 
             {/* Кръгът — сцената за отговора (desktop) */}
-            <div className="lg:col-span-6 hidden lg:flex justify-center">
-              <div className="relative w-[min(44vw,620px)] aspect-square">
+            <div className="lg:col-span-6 hidden lg:flex justify-center xl:justify-end">
+              <div className="relative w-[min(52vw,740px)] aspect-square shrink-0">
                 {/* Тънката окръжност + червената дъга при СЛЕДВАЩ */}
                 <div className="absolute inset-0 rounded-full border border-[#1A1A1A]/10" />
                 <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100">
@@ -234,9 +234,9 @@ export default function ScrollWizard() {
                 </svg>
 
                 {/* Съдържание в кръга */}
-                <div className="wz-anim absolute inset-0 flex flex-col items-center justify-center px-[14%]">
+                <div className="wz-anim absolute inset-0 flex flex-col items-center justify-center px-[12%]">
                   {q.subtitle && (
-                    <p className="text-sm font-light text-[#1A1A1A]/65 leading-relaxed text-center mb-10 max-w-xs">{q.subtitle}</p>
+                    <p className="text-[15px] lg:text-base font-light text-[#1A1A1A]/70 leading-relaxed text-center mb-12 max-w-sm">{q.subtitle}</p>
                   )}
                   {answerArea}
                 </div>

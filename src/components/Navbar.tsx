@@ -76,7 +76,7 @@ export default function Navbar() {
         <Link
           to="/zapitvane"
           className={`hidden lg:inline-flex items-center bg-[#DC2626] text-white text-[11px] uppercase tracking-[0.14em] font-medium px-5 py-3 rounded-full shadow-lg shadow-[#DC2626]/20 hover:bg-[#B91C1C] hover:scale-[1.03] transition-all duration-300 ${
-            menuOpen ? 'opacity-0 pointer-events-none' : 'opacity-100'
+            menuOpen || location.pathname === '/zapitvane' ? 'opacity-0 pointer-events-none' : 'opacity-100'
           }`}
         >
           Запитване
