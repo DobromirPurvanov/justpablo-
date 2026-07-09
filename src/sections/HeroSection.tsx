@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router'
 import gsap from 'gsap'
+import { introDone } from '../lib/intro'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -11,25 +12,25 @@ export default function HeroSection() {
   const circleRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    const tl = gsap.timeline({ delay: 0.2 })
-    // Animate each line of the title with stagger
-    const lines = titleRef.current?.querySelectorAll('.hero-line')
-    if (lines) {
-      tl.from(lines, {
-        y: 60, opacity: 0, duration: 1.2, stagger: 0.15, ease: 'power3.out',
-      })
-    }
-    tl.from('.hero-sub', {
-      y: 24, opacity: 0, duration: 0.8, ease: 'power3.out',
-    }, '-=0.7')
-    tl.from('.hero-video-wrap', {
-      opacity: 0, scale: 0.97, duration: 1.4, ease: 'power2.out',
-    }, 0.15)
-    tl.from(circleRef.current, {
-      scale: 0, opacity: 0, duration: 0.8, ease: 'back.out(1.7)',
-    }, '-=0.6')
-
-    return () => { tl.kill() }
+    let tl: gsap.core.Timeline | undefined
+    let cancelled = false
+    introDone.then(() => {
+      if (cancelled) return
+      tl = gsap.timeline({ delay: 0.05 })
+      const lines = titleRef.current?.querySelectorAll('.hero-line')
+      if (lines) {
+        tl.from(lines, {
+          y: 60, opacity: 0, duration: 1.2, stagger: 0.15, ease: 'power3.out',
+        })
+      }
+      tl.from('.hero-sub', {
+        y: 24, opacity: 0, duration: 0.8, ease: 'power3.out',
+      }, '-=0.7')
+      tl.from(circleRef.current, {
+        scale: 0, opacity: 0, duration: 0.8, ease: 'back.out(1.7)',
+      }, '-=0.6')
+    })
+    return () => { cancelled = true; tl?.kill() }
   }, [])
 
   // Паралакс при излизане от hero-то — дълбочина без да пипа entrance-а
@@ -40,7 +41,6 @@ export default function HeroSection() {
         const st = { trigger: sectionRef.current, start: 'top top', end: 'bottom top', scrub: 1 }
         gsap.to(titleRef.current, { y: -90, ease: 'none', scrollTrigger: st })
         gsap.to(circleRef.current, { y: 70, ease: 'none', scrollTrigger: st })
-        gsap.to('.hero-video-wrap', { y: 45, ease: 'none', scrollTrigger: st })
       })
     }, sectionRef)
     return () => ctx.revert()
@@ -55,23 +55,6 @@ export default function HeroSection() {
       <div className="absolute top-[15%] right-[8%] w-[300px] h-[300px] lg:w-[450px] lg:h-[450px] rounded-full bg-[#DC2626]/[0.04] blur-3xl pointer-events-none" />
       <div className="absolute bottom-[10%] left-[5%] w-[200px] h-[200px] lg:w-[350px] lg:h-[350px] rounded-full bg-[#DC2626]/[0.03] blur-3xl pointer-events-none" />
       
-      {/* Анимирано лого — фоново видео, слива се с бялото чрез multiply */}
-      <div
-        className="hero-video-wrap absolute right-[-5%] top-[10%] w-[46vw] max-w-[660px] hidden lg:block pointer-events-none select-none motion-reduce:hidden"
-        aria-hidden="true"
-      >
-        <video
-          src="/videos/logo-loop.mp4"
-          poster="/videos/logo-loop-poster.jpg"
-          autoPlay
-          muted
-          loop
-          playsInline
-          preload="metadata"
-          className="w-full h-auto mix-blend-multiply"
-        />
-      </div>
-
       {/* Subtle grid pattern overlay */}
       <div 
         className="absolute inset-0 opacity-[0.015] pointer-events-none"

@@ -16,10 +16,12 @@ import Footer from './components/Footer'
 import CookieBanner from './components/CookieBanner'
 import SmoothScroll from './components/SmoothScroll'
 import CustomCursor from './components/CustomCursor'
+import IntroLoader from './components/IntroLoader'
 
 export default function App() {
   return (
     <SmoothScroll>
+    <IntroLoader />
     <div className="min-h-screen bg-white">
       <Navbar />
       <main>
