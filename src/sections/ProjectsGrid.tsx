@@ -12,6 +12,7 @@ interface Project {
   services: string[]
   years: string
   image: string
+  video?: string
   logo?: string
 }
 
@@ -82,15 +83,27 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
   }, [index])
 
   return (
-    <div ref={cardRef} className="group cursor-pointer relative">
+    <div ref={cardRef} data-cursor="Виж проекта" className="group cursor-pointer relative">
       {/* Image */}
       <div className="pc-frame relative overflow-hidden bg-[#F5F5F5] rounded-lg shadow-sm group-hover:shadow-xl transition-shadow duration-500 aspect-[4/3]">
         <div className="pc-imgwrap absolute inset-0 scale-[1.15] will-change-transform">
-          <img
-            src={project.image}
-            alt={project.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-          />
+          {project.video ? (
+            <video
+              src={project.video}
+              poster={project.image}
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <img
+              src={project.image}
+              alt={project.name}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+            />
+          )}
         </div>
         {/* Overlay gradient on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A]/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />

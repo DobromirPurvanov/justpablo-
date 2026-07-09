@@ -21,6 +21,26 @@ const pillars = [
   },
 ]
 
+// Три концентрични пръстена с услуги (almero стил) — въртят се
+// с различни скорости и в различни посоки
+const rings = [
+  {
+    id: 'ring-outer', r: 267.5, spin: 'ring-a',
+    text: 'Комуникационна стратегия   /   Целеви аудитории   /   Позициониране   /   Брандинг   /   Инсайти   /   Визуална идентичност   /',
+  },
+  {
+    id: 'ring-mid', r: 239, spin: 'ring-b',
+    text: 'Уеб дизайн   /   Фотография   /   Видео   /   Копирайт   /   Google Ads   /   SEO   /   Рекламни кампании   /   Постинг план   /',
+  },
+  {
+    id: 'ring-inner', r: 210.55, spin: 'ring-c',
+    text: 'Business Intelligence   /   Автоматизация   /   Криейтив   /   Планинг   /   SMS   /   Viber   /',
+  },
+]
+
+const circlePath = (r: number) =>
+  `M ${280 - r},280 A ${r},${r} 0 1,1 ${280 + r},280 A ${r},${r} 0 1,1 ${280 - r},280`
+
 export default function ServicesOverview() {
   const sectionRef = useRef<HTMLDivElement>(null)
 
@@ -38,7 +58,7 @@ export default function ServicesOverview() {
 
   return (
     <section ref={sectionRef} className="bg-white py-20 lg:py-32 relative overflow-hidden">
-      {/* Статичен фонов текст — фин, без движение */}
+      {/* Фонов воден знак с лек дрифт */}
       <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none z-0">
         <span className="so-watermark block font-ultra-thin text-[clamp(60px,12vw,180px)] text-[#1A1A1A]/[0.03] tracking-[0.4em] whitespace-nowrap">
           УСЛУГИ
@@ -55,41 +75,33 @@ export default function ServicesOverview() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-14 lg:gap-8 items-start">
-            {/* Ляво: чист кръгов CTA елемент — без текст по дъга */}
+            {/* Ляво: три концентрични въртящи се пръстена + централен CTA */}
             <div className="lg:col-span-5">
-              <div className="so-circle relative w-[280px] h-[280px] md:w-[360px] md:h-[360px] lg:w-[400px] lg:h-[400px] mx-auto lg:sticky lg:top-32">
-                <div className="absolute inset-0 rounded-full border border-[#1A1A1A]/[0.08]" />
-                <div className="absolute inset-[11%] rounded-full border border-[#DC2626]/15 border-dashed" />
-                <div className="absolute inset-[22%] rounded-full bg-[#DC2626]/[0.03]" />
-
-                {/* Бавно въртящи се точки — декорация без текст */}
-                <div className="absolute inset-0 animate-spin-slow">
-                  {Array.from({ length: 8 }).map((_, i) => {
-                    const a = (i / 8) * Math.PI * 2
-                    return (
-                      <div key={i}
-                        className="absolute w-1.5 h-1.5 rounded-full bg-[#DC2626]/40"
-                        style={{
-                          left: `${50 + 48 * Math.cos(a)}%`,
-                          top: `${50 + 48 * Math.sin(a)}%`,
-                          transform: 'translate(-50%, -50%)',
-                        }}
-                      />
-                    )
-                  })}
-                </div>
+              <div className="so-circle relative w-[300px] h-[300px] md:w-[400px] md:h-[400px] lg:w-[440px] lg:h-[440px] mx-auto lg:sticky lg:top-32">
+                {rings.map(ring => (
+                  <div key={ring.id} className={`absolute inset-0 ${ring.spin}`}>
+                    <svg viewBox="0 0 560 560" className="w-full h-full">
+                      <defs>
+                        <path id={ring.id} d={circlePath(ring.r)} fill="none" />
+                      </defs>
+                      <text fill="#1A1A1A" opacity="0.5" fontSize="16" fontFamily="Montserrat, sans-serif" fontWeight="500" letterSpacing="1.5">
+                        <textPath href={`#${ring.id}`}>{ring.text}</textPath>
+                      </text>
+                    </svg>
+                  </div>
+                ))}
 
                 {/* Централен CTA */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <Link to="/uslugi" className="flex flex-col items-center text-center group px-8">
-                    <span className="text-xs font-medium text-[#1A1A1A]/50 tracking-wider mb-2">
+                <div className="absolute inset-[27%] rounded-full bg-white/80 backdrop-blur-[2px] flex items-center justify-center">
+                  <Link to="/uslugi" data-cursor="Виж повече" className="flex flex-col items-center text-center group px-6">
+                    <span className="text-[11px] font-medium text-[#1A1A1A]/50 tracking-wider mb-2">
                       Пътят към успешния бранд
                     </span>
-                    <span className="text-lg lg:text-xl font-semibold text-[#1A1A1A] group-hover:text-[#DC2626] transition-colors duration-300">
+                    <span className="text-base lg:text-lg font-semibold text-[#1A1A1A] group-hover:text-[#DC2626] transition-colors duration-300">
                       Стъпка по стъпка
                     </span>
-                    <span className="mt-4 w-11 h-11 rounded-full bg-[#DC2626] flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-[#DC2626]/30 transition-all duration-300">
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+                    <span className="mt-4 w-10 h-10 rounded-full bg-[#DC2626] flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-[#DC2626]/30 transition-all duration-300">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
                         <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </span>
@@ -98,7 +110,7 @@ export default function ServicesOverview() {
               </div>
             </div>
 
-            {/* Дясно: три номерирани стълба с ясна структура */}
+            {/* Дясно: три номерирани стълба */}
             <div className="lg:col-span-7 flex flex-col">
               {pillars.map(p => (
                 <div key={p.number} className="so-pillar grid grid-cols-[auto_1fr] gap-6 lg:gap-10 py-8 lg:py-10 border-t border-[#1A1A1A]/[0.08] first:border-t-0 first:pt-0">

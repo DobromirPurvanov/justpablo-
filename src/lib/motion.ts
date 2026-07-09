@@ -90,3 +90,52 @@ export function imageParallax(imgWrap: gsap.TweenTarget, frame: Element, opts: {
   })
   return mm
 }
+
+/* ─────────── Word-by-word reveal (almero стил четене) ─────────── */
+
+/** Разбива текста на думи в span-ове, запазвайки вложените em/strong.
+    Идемпотентно — при повторно извикване връща съществуващите. */
+export function splitWords(root: Element): HTMLElement[] {
+  const existing = root.querySelectorAll<HTMLElement>('.w-split')
+  if (existing.length) return Array.from(existing)
+  const words: HTMLElement[] = []
+  const process = (node: Node) => {
+    Array.from(node.childNodes).forEach(child => {
+      if (child.nodeType === Node.TEXT_NODE) {
+        const text = child.textContent ?? ''
+        if (!text.trim()) return
+        const frag = document.createDocumentFragment()
+        text.split(/(\s+)/).forEach(part => {
+          if (!part) return
+          if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(part)); return }
+          const span = document.createElement('span')
+          span.className = 'w-split'
+          span.textContent = part
+          frag.appendChild(span)
+          words.push(span)
+        })
+        node.replaceChild(frag, child)
+      } else if (child.nodeType === Node.ELEMENT_NODE) {
+        process(child)
+      }
+    })
+  }
+  process(root)
+  return words
+}
+
+/** Думите "просветват" една по една, докато параграфът минава през екрана.
+    Извиква се само при включени анимации — иначе текстът си е нормален. */
+export function wordsReveal(paragraph: Element) {
+  const words = splitWords(paragraph)
+  if (!words.length) return
+  gsap.fromTo(words,
+    { opacity: 0.14 },
+    {
+      opacity: 1,
+      stagger: 0.015,
+      ease: 'none',
+      scrollTrigger: { trigger: paragraph, start: 'top 82%', end: 'top 40%', scrub: 0.5 },
+    }
+  )
+}

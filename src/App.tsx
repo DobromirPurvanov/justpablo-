@@ -15,6 +15,7 @@ import Footer from './components/Footer'
 
 import CookieBanner from './components/CookieBanner'
 import SmoothScroll from './components/SmoothScroll'
+import CustomCursor from './components/CustomCursor'
 
 export default function App() {
   return (
@@ -39,6 +40,7 @@ export default function App() {
       <Footer />
       <CookieBanner />
     </div>
+    <CustomCursor />
     </SmoothScroll>
   )
 }

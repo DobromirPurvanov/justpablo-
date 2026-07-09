@@ -213,10 +213,66 @@ export default function Services() {
       reveal('.svc-hero-title', el.querySelector('.svc-hero'), { y: 40, duration: 1 })
       reveal('.svc-hero-sub', el.querySelector('.svc-hero'), { y: 28, delay: 0.2 })
 
-      // Всяка фаза: заглавие -> описание -> икони, с еднакъв ритъм
-      gsap.utils.toArray<HTMLElement>('.phase-section').forEach(section => {
-        reveal(section.querySelectorAll('.ph-title, .ph-desc'), section, { stagger: 0.12 })
-        reveal(section.querySelectorAll('.ph-icon'), section, { y: 20, stagger: 0.08, delay: 0.25, duration: 0.6 })
+      const mmSteps = gsap.matchMedia()
+
+      // Desktop: закачена сцена — скролът превърта фазите на място (almero стил)
+      mmSteps.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
+        const scene = el.querySelector('.phases-scene') as HTMLElement | null
+        if (!scene) return
+        const steps = gsap.utils.toArray<HTMLElement>('.phase-step', scene)
+        const nums = gsap.utils.toArray<HTMLElement>('.rail-num', scene)
+        const railLine = scene.querySelector('.rail-line')
+        if (steps.length < 2) return
+
+        gsap.set(steps.slice(1), { autoAlpha: 0 })
+        gsap.set(nums, { color: 'rgba(26,26,26,0.25)' })
+        if (nums[0]) gsap.set(nums[0], { color: '#DC2626' })
+
+        const total = steps.length - 1
+        const tl = gsap.timeline({
+          defaults: { ease: 'power3.out' },
+          scrollTrigger: {
+            trigger: scene,
+            start: 'top top',
+            end: () => '+=' + total * window.innerHeight,
+            pin: true,
+            scrub: 0.6,
+            snap: { snapTo: 1 / total, duration: 0.4, ease: 'power2.inOut' },
+            invalidateOnRefresh: true,
+            anticipatePin: 1,
+          },
+        })
+
+        steps.forEach((step, i) => {
+          if (i === 0) return
+          const prev = steps[i - 1]
+          const t0 = i - 1
+          tl.to(prev.querySelectorAll('.ph-anim'), { y: -40, autoAlpha: 0, duration: 0.35, stagger: 0.03, ease: 'power2.in' }, t0 + 0.05)
+            .set(prev, { autoAlpha: 0 }, t0 + 0.5)
+            .set(step, { autoAlpha: 1 }, t0 + 0.5)
+            .fromTo(step.querySelectorAll('.ph-anim'),
+              { y: 46, autoAlpha: 0 },
+              { y: 0, autoAlpha: 1, duration: 0.4, stagger: 0.02 }, t0 + 0.52)
+          if (nums[i]) tl.to(nums[i], { color: '#DC2626', duration: 0.1 }, t0 + 0.5)
+          if (nums[i - 1]) tl.to(nums[i - 1], { color: 'rgba(26,26,26,0.25)', duration: 0.1 }, t0 + 0.5)
+        })
+
+        // допълване до точна дължина, за да пасне snap-ът на стъпките
+        tl.to({}, { duration: Math.max(0.001, total - tl.duration()) })
+
+        if (railLine) {
+          gsap.fromTo(railLine, { scaleY: 0 }, {
+            scaleY: 1, ease: 'none', transformOrigin: 'top center',
+            scrollTrigger: { trigger: scene, start: 'top top', end: () => '+=' + total * window.innerHeight, scrub: 0.6 },
+          })
+        }
+      })
+
+      // Мобилно / reduced-motion: обикновени каскади
+      mmSteps.add('(max-width: 1023px), (prefers-reduced-motion: reduce)', () => {
+        gsap.utils.toArray<HTMLElement>('.phase-step').forEach(section => {
+          reveal(section.querySelectorAll('.ph-anim'), section, { stagger: 0.1 })
+        })
       })
 
       // Цитат + CTA
@@ -227,6 +283,19 @@ export default function Services() {
       gsap.utils.toArray<HTMLElement>('.svc-blob').forEach(blob => {
         const sec = blob.closest('section')
         if (sec) drift(blob, sec, { from: 40, to: -40, scrub: 1.5 })
+      })
+
+      // CTA пръстенът се върти от скрола (almero стил)
+      const mm = gsap.matchMedia()
+      mm.add('(prefers-reduced-motion: no-preference)', () => {
+        const ring = el.querySelector('.svc-cta-ring')
+        const ringSec = ring?.closest('section')
+        if (ring && ringSec) {
+          gsap.to(ring, {
+            rotation: 160, ease: 'none',
+            scrollTrigger: { trigger: ringSec, start: 'top bottom', end: 'bottom top', scrub: 1 },
+          })
+        }
       })
     }, el)
     return () => ctx.revert()
@@ -252,50 +321,58 @@ export default function Services() {
         </div>
       </section>
 
-      {/* Фази със свързваща линия */}
-      <div className="relative">
-        <div className="absolute left-1/2 top-0 bottom-0 w-px bg-gradient-to-b from-[#DC2626]/20 via-[#DC2626]/10 to-transparent hidden lg:block" />
+      {/* Фази — закачена сцена със стъпки (desktop) / стакнати секции (мобилно) */}
+      <section className="phases-scene relative bg-white">
+        {/* Прогрес рейл */}
+        <div className="hidden lg:flex flex-col items-center gap-5 absolute left-6 xl:left-10 top-1/2 -translate-y-1/2 z-30 pointer-events-none">
+          <div className="relative flex flex-col items-center gap-5">
+            <div className="rail-line absolute left-1/2 -translate-x-1/2 top-2 bottom-2 w-px bg-[#DC2626]/30" />
+            {phases.map(p => (
+              <span key={p.number} className="rail-num relative z-10 bg-white py-1 text-xs font-semibold tracking-wider">
+                {p.number}
+              </span>
+            ))}
+          </div>
+        </div>
 
-        {phases.map((phase, idx) => (
-          <section key={phase.number} className="phase-section relative bg-white py-16 lg:py-24 overflow-hidden">
-            <div className="absolute top-8 left-1/2 -translate-x-1/2 hidden lg:flex items-center justify-center w-10 h-10 rounded-full bg-[#DC2626] text-white text-xs font-bold z-10">
-              {phase.number}
-            </div>
-
-            <div className="section-padding relative z-10">
-              <div className="container-max">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
-                  {/* Текст */}
-                  <div className={`lg:col-span-5 ${idx % 2 === 1 ? 'lg:order-2' : ''}`}>
-                    <div className="ph-title flex items-center gap-4 mb-6">
-                      <span className="lg:hidden w-8 h-8 rounded-full bg-[#DC2626] text-white text-xs font-bold flex items-center justify-center shrink-0">
-                        {phase.number}
-                      </span>
-                      <h2 className="text-xl lg:text-2xl xl:text-3xl font-bold text-[#1A1A1A] leading-tight">{phase.title}</h2>
-                    </div>
-                    <p className="ph-desc text-sm lg:text-base font-light text-[#1A1A1A]/60 leading-relaxed mb-8">{phase.description}</p>
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-                      {phase.services.map((svc) => (
-                        <div key={svc.name} className="ph-icon flex flex-col items-start group">
-                          <div className="w-12 h-12 rounded-xl bg-[#F5F5F5] group-hover:bg-[#DC2626]/10 flex items-center justify-center mb-2 transition-colors duration-300">
-                            <img src={svc.icon} alt={svc.name} className="w-6 h-6 object-contain" />
+        <div className="relative lg:h-screen">
+          {phases.map(phase => (
+            <div key={phase.number} className="phase-step relative lg:absolute lg:inset-0 py-16 lg:py-0 lg:flex lg:items-center bg-white overflow-hidden">
+              <div className="section-padding w-full relative z-10">
+                <div className="container-max">
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
+                    {/* Текст */}
+                    <div className="lg:col-span-5">
+                      <div className="ph-anim flex items-center gap-4 mb-6">
+                        <span className="w-8 h-8 rounded-full bg-[#DC2626] text-white text-xs font-bold flex items-center justify-center shrink-0">
+                          {phase.number}
+                        </span>
+                        <h2 className="text-xl lg:text-2xl xl:text-3xl font-bold text-[#1A1A1A] leading-tight">{phase.title}</h2>
+                      </div>
+                      <p className="ph-anim text-sm lg:text-base font-light text-[#1A1A1A]/60 leading-relaxed mb-8">{phase.description}</p>
+                      <div className="ph-anim grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+                        {phase.services.map((svc) => (
+                          <div key={svc.name} className="flex flex-col items-start group">
+                            <div className="w-12 h-12 rounded-xl bg-[#F5F5F5] group-hover:bg-[#DC2626]/10 flex items-center justify-center mb-2 transition-colors duration-300">
+                              <img src={svc.icon} alt={svc.name} className="w-6 h-6 object-contain" />
+                            </div>
+                            <span className="text-xs lg:text-sm font-semibold text-[#1A1A1A] leading-tight">{svc.name}</span>
                           </div>
-                          <span className="text-xs lg:text-sm font-semibold text-[#1A1A1A] leading-tight">{svc.name}</span>
-                        </div>
-                      ))}
+                        ))}
+                      </div>
                     </div>
-                  </div>
 
-                  {/* Кръг */}
-                  <div className={`lg:col-span-7 ${idx % 2 === 1 ? 'lg:order-1' : ''}`}>
-                    <PhaseCircle months={phase.months} period={phase.period} stats={phase.stats} />
+                    {/* Кръг */}
+                    <div className="ph-anim lg:col-span-7">
+                      <PhaseCircle months={phase.months} period={phase.period} stats={phase.stats} />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </section>
-        ))}
-      </div>
+          ))}
+        </div>
+      </section>
 
       {/* Цитат + CTA */}
       <section className="svc-quote relative bg-white py-20 lg:py-32 overflow-hidden">
@@ -309,8 +386,8 @@ export default function Services() {
                 </p>
               </div>
               <div className="q-item lg:col-span-4 flex justify-center lg:justify-end">
-                <Link to="/zapitvane" className="group relative w-32 h-32 md:w-40 md:h-40 lg:w-44 lg:h-44 flex items-center justify-center">
-                  <svg viewBox="0 0 180 180" className="absolute inset-0 w-full h-full animate-spin-slow">
+                <Link to="/zapitvane" data-cursor="Запитване" className="group relative w-32 h-32 md:h-40 md:w-40 lg:w-44 lg:h-44 flex items-center justify-center">
+                  <svg viewBox="0 0 180 180" className="svc-cta-ring absolute inset-0 w-full h-full">
                     <defs>
                       <path id="ctaCircleSvc" d="M 90, 90 m -70, 0 a 70,70 0 1,1 140,0 a 70,70 0 1,1 -140,0" />
                     </defs>

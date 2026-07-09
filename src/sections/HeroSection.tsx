@@ -82,7 +82,7 @@ export default function HeroSection() {
             ref={circleRef}
             className="relative md:absolute md:bottom-0 md:right-0 lg:right-12 w-24 h-24 md:w-28 md:h-28 lg:w-36 lg:h-36 mt-8 md:mt-0 md:translate-y-[30%]"
           >
-            <Link to="/zapitvane" className="relative w-full h-full block group">
+            <Link to="/zapitvane" data-cursor="Запитване" className="relative w-full h-full block group">
               {/* Rotating text */}
               <svg viewBox="0 0 144 144" className="absolute inset-0 w-full h-full animate-spin-slow">
                 <defs>
