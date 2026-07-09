@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { drift, imageParallax } from '../lib/motion'
+import { imageParallax, reveal } from '../lib/motion'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -13,137 +13,145 @@ interface Project {
   years: string
   image: string
   video?: string
-  logo?: string
+  growth: string
 }
 
 const projects: Project[] = [
   {
     name: 'Alpha Motors',
-    tagline: 'Лидер в автомобилните части с устойчива SEO стратегия и 420% ръст в трафика.',
+    tagline: 'Изградихме устойчива SEO стратегия за лидер в автомобилните части, която увеличи органичния трафик с над 400%.',
     category: 'Автомобилни части',
     services: ['SEO', 'Уеб дизайн', 'Реклама', 'Анализи'],
     years: '2021 – до сега',
     image: '../images/case-ecommerce.jpg',
-    logo: 'AM',
+    growth: '+420%',
   },
   {
     name: 'Astrafolio',
-    tagline: 'От стартиращ проект до разпознаваем бранд в инвестиционния сектор.',
+    tagline: 'От стартиращ проект до разпознаваем бранд в инвестиционния сектор за по-малко от 2 години.',
     category: 'Инвестиции',
     services: ['Брандинг', 'Уеб дизайн', 'SEO', 'Съдържание'],
     years: '2022 – до сега',
     image: './images/case-b2b.jpg',
-    logo: 'AF',
+    growth: '+315%',
   },
   {
     name: 'Arcanum Group',
-    tagline: 'Комплексна дигитална стратегия, която утрои онлайн присъствието.',
+    tagline: 'Комплексна дигитална стратегия, която утрои онлайн присъствието и утвърди бранда като лидер в нишата.',
     category: 'Консултации',
     services: ['Стратегия', 'SEO', 'Реклама', 'Socials'],
     years: '2020 – до сега',
     image: './images/case-local.jpg',
-    logo: 'AG',
+    growth: 'x3',
   },
   {
     name: 'Dinkovi',
-    tagline: 'Семейната строителна фирма се превърна в дигитален лидер в региона.',
+    tagline: 'Семейната строителна фирма се превърна в дигитален лидер в региона с дългосрочна SEO стратегия.',
     category: 'Строителство',
     services: ['SEO', 'Уеб дизайн', 'Фотография', 'Реклама'],
     years: '2019 – до сега',
     image: './images/case-content.jpg',
-    logo: 'D',
+    growth: '+580%',
   },
   {
     name: 'CC78',
-    tagline: 'Доминиращи позиции в нишата за електронна търговия.',
+    tagline: 'Постигнахме доминиращи позиции в нишата за електронна търговия чрез комплексна дигитална стратегия.',
     category: 'E-commerce',
     services: ['SEO', 'Реклама', 'Дизайн', 'Анализи'],
     years: '2021 – до сега',
     image: './images/hero-mockup.jpg',
-    logo: 'CC78',
+    growth: '100%',
   },
 ]
 
-function ProjectCard({ project, index }: { project: Project; index: number }) {
-  const cardRef = useRef<HTMLDivElement>(null)
+/* Almero модел: голяма медия + залепени детайли, които стоят,
+   докато медията минава покрай тях */
+function PortfolioItem({ project }: { project: Project }) {
+  const itemRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
-    if (!cardRef.current) return
-    const card = cardRef.current
+    const el = itemRef.current
+    if (!el) return
     const ctx = gsap.context(() => {
-      gsap.from(card, {
-        scrollTrigger: { trigger: card, start: 'top 88%', once: true },
-        y: 36, opacity: 0, duration: 0.8, ease: 'power3.out', clearProps: 'transform',
-      })
-      const frame = card.querySelector('.pc-frame')
-      const wrap = card.querySelector('.pc-imgwrap')
+      reveal(el.querySelector('.pi-media'), el, { y: 44, duration: 0.9 })
+      reveal(el.querySelectorAll('.pi-detail'), el, { y: 28, stagger: 0.1, delay: 0.15 })
+      const frame = el.querySelector('.pc-frame')
+      const wrap = el.querySelector('.pc-imgwrap')
       if (frame && wrap) imageParallax(wrap, frame)
-    }, card)
+    }, el)
     return () => ctx.revert()
-  }, [index])
+  }, [])
 
   return (
-    <div ref={cardRef} data-cursor="Виж проекта" className="group cursor-pointer relative">
-      {/* Image */}
-      <div className="pc-frame relative overflow-hidden bg-[#F5F5F5] rounded-lg shadow-sm group-hover:shadow-xl transition-shadow duration-500 aspect-[4/3]">
-        <div className="pc-imgwrap absolute inset-0 scale-[1.15] will-change-transform">
-          {project.video ? (
-            <video
-              src={project.video}
-              poster={project.image}
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="w-full h-full object-cover"
-            />
-          ) : (
-            <img
-              src={project.image}
-              alt={project.name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-            />
-          )}
-        </div>
-        {/* Overlay gradient on hover */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A]/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        {/* Vertical year text on left */}
-        <div className="absolute left-3 top-1/2 -translate-y-1/2">
-          <span
-            className="text-[10px] font-light text-white/80 tracking-wider whitespace-nowrap"
-            style={{ writingMode: 'vertical-rl', textOrientation: 'mixed', transform: 'rotate(180deg)' }}
-          >
-            {project.years}
-          </span>
-        </div>
-        {/* Vertical services text on right */}
-        <div className="absolute right-3 top-1/2 -translate-y-1/2">
-          <span
-            className="text-[9px] font-light text-white/70 tracking-wider whitespace-nowrap"
-            style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
-          >
-            {project.services.join(' / ')}
-          </span>
-        </div>
-      </div>
+    <article ref={itemRef} className="section-padding">
+      <div className="container-max">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+          {/* Медия */}
+          <div className="pi-media lg:col-span-8 group cursor-pointer" data-cursor="Виж проекта">
+            <div className="pc-frame relative overflow-hidden rounded-xl bg-[#F5F5F5] aspect-[16/10] shadow-sm group-hover:shadow-2xl transition-shadow duration-500">
+              <div className="pc-imgwrap absolute inset-0 scale-[1.15] will-change-transform">
+                {project.video ? (
+                  <video
+                    src={project.video}
+                    poster={project.image}
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <img
+                    src={project.image}
+                    alt={project.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                )}
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A]/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
-      {/* Info below */}
-      <div className="mt-4 flex items-start justify-between gap-4">
-        <div>
-          <h3 className="text-base font-bold text-[#1A1A1A] group-hover:text-[#DC2626] transition-colors">
-            {project.name}
-          </h3>
-          <p className="text-sm font-light text-[#1A1A1A]/70 mt-1 max-w-sm leading-relaxed">
-            {project.tagline}
-          </p>
-        </div>
-        {project.logo && (
-          <div className="text-[10px] font-semibold text-[#1A1A1A]/30 tracking-widest shrink-0 mt-1">
-            {project.logo}
+              {/* Име на проекта върху медията */}
+              <h3 className="absolute top-5 left-6 text-lg lg:text-xl font-bold text-white drop-shadow-md">
+                {project.name}
+              </h3>
+
+              {/* Години — вертикално вляво */}
+              <div className="absolute left-3 bottom-6">
+                <span
+                  className="text-[10px] font-light text-white/80 tracking-wider whitespace-nowrap"
+                  style={{ writingMode: 'vertical-rl', textOrientation: 'mixed', transform: 'rotate(180deg)' }}
+                >
+                  {project.years}
+                </span>
+              </div>
+
+              {/* Услуги — вертикално вдясно */}
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                <span
+                  className="text-[9px] font-light text-white/70 tracking-wider whitespace-nowrap"
+                  style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
+                >
+                  {project.services.join(' / ')}
+                </span>
+              </div>
+            </div>
           </div>
-        )}
+
+          {/* Детайли — залепени, докато медията минава (pin ефектът им) */}
+          <div className="lg:col-span-4 lg:sticky lg:top-[26vh]">
+            <div className="pi-detail text-[10px] uppercase tracking-[0.2em] font-light text-[#1A1A1A]/40 mb-3">
+              {project.category}
+            </div>
+            <p className="pi-detail text-base lg:text-lg font-light text-[#1A1A1A]/75 leading-relaxed max-w-sm">
+              {project.tagline}
+            </p>
+            <div className="pi-detail text-[clamp(40px,5vw,72px)] font-extralight text-[#DC2626] leading-none mt-6">
+              {project.growth}
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </article>
   )
 }
 
@@ -154,52 +162,35 @@ export default function ProjectsGrid() {
     const el = sectionRef.current
     if (!el) return
     const ctx = gsap.context(() => {
-      drift('.pg-bgtext', el, { from: 60, to: -60 })
-      drift('.pg-col-left', el, { from: 40, to: -40, scrub: 1.2 })
-      drift('.pg-col-right', el, { from: -30, to: 30, scrub: 1.2 })
+      // Гигантското заглавие се плъзга хоризонтално със скрола (almero title-content)
+      const mm = gsap.matchMedia()
+      mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
+        gsap.fromTo('.pg-bigtitle',
+          { x: '6vw' },
+          {
+            x: '-12vw',
+            ease: 'none',
+            scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: 1 },
+          }
+        )
+      })
     }, el)
     return () => ctx.revert()
   }, [])
 
   return (
-    <section ref={sectionRef} className="bg-white py-16 lg:py-24 relative overflow-hidden">
-      {/* Giant "ПРОЕКТИ" background text with parallax */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none z-0">
-        <span className="pg-bgtext block font-ultra-thin text-[clamp(100px,20vw,280px)] text-[#1A1A1A]/[0.04] tracking-[0.3em] whitespace-nowrap">
-          ПРОЕКТИ
+    <section ref={sectionRef} className="bg-white py-16 lg:py-28 overflow-hidden">
+      {/* Гигантско плъзгащо се секционно заглавие */}
+      <div className="mb-12 lg:mb-20 pointer-events-none select-none">
+        <span className="pg-bigtitle block font-ultra-thin whitespace-nowrap text-[clamp(72px,15vw,210px)] leading-none text-[#1A1A1A] will-change-transform">
+          &nbsp;Проекти
         </span>
       </div>
 
-      <div className="section-padding relative z-10">
-        <div className="container-max">
-          {/* Section label */}
-          <div className="mb-10">
-            <span className="text-xs font-semibold text-[#1A1A1A] tracking-wider">Проекти</span>
-          </div>
-
-          {/* Asymmetric grid matching almero */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
-            {/* Left column - 2 stacked */}
-            <div className="pg-col-left lg:col-span-5 flex flex-col gap-6 lg:gap-8">
-              <ProjectCard project={projects[0]} index={0} />
-              <ProjectCard project={projects[4]} index={4} />
-            </div>
-
-            {/* Spacer for visual offset */}
-            <div className="hidden lg:block lg:col-span-1" />
-
-            {/* Right column - 2 stacked with offset */}
-            <div className="pg-col-right lg:col-span-6 flex flex-col gap-6 lg:gap-8 lg:mt-24">
-              <ProjectCard project={projects[1]} index={1} />
-              <ProjectCard project={projects[3]} index={3} />
-            </div>
-          </div>
-
-          {/* Bottom row - single center */}
-          <div className="mt-6 lg:mt-8 max-w-2xl mx-auto">
-            <ProjectCard project={projects[2]} index={2} />
-          </div>
-        </div>
+      <div className="flex flex-col gap-16 lg:gap-28">
+        {projects.map(project => (
+          <PortfolioItem key={project.name} project={project} />
+        ))}
       </div>
     </section>
   )

@@ -59,7 +59,7 @@ export default function Navbar() {
       <Link to="/" className="fixed top-5 left-5 lg:left-8 z-50 flex items-center gap-3" onClick={() => setMenuOpen(false)}>
         <img src="/images/logo-mark.png" alt="Just Pablo Digital" className="w-10 h-10 lg:w-11 lg:h-11 object-contain" />
         <span className="flex flex-col leading-none">
-          <span className={`text-lg font-semibold tracking-tight transition-colors duration-500 ${menuOpen ? 'text-white' : 'text-[#1A1A1A]'}`}>Just Pablo</span>
+          <span className="text-lg font-semibold tracking-tight text-[#1A1A1A]">Just Pablo</span>
           <span className="text-[8px] font-bold uppercase tracking-[0.32em] text-[#DC2626] mt-1">Digital</span>
         </span>
       </Link>
@@ -80,13 +80,12 @@ export default function Navbar() {
           aria-label={menuOpen ? 'Затвори менюто' : 'Отвори менюто'}
           className="group flex items-center gap-3"
         >
-          <span className={`hidden lg:block text-[11px] uppercase tracking-[0.22em] font-medium transition-colors duration-500 ${menuOpen ? 'text-white/80' : 'text-[#1A1A1A]/70 group-hover:text-[#1A1A1A]'}`}>
+          <span className={`hidden lg:block text-[11px] uppercase tracking-[0.22em] font-medium transition-colors duration-500 ${menuOpen ? 'text-[#1A1A1A]' : 'text-[#1A1A1A]/70 group-hover:text-[#1A1A1A]'}`}>
             {menuOpen ? 'Затвори' : 'Меню'}
           </span>
           <span
-            className={`relative w-12 h-12 rounded-full flex items-center justify-center transition-colors duration-300 shadow-lg ${
-              menuOpen ? 'bg-white text-[#1A1A1A]' : 'bg-[#1A1A1A] text-white group-hover:bg-[#DC2626]'
-            }`}
+            className="relative w-12 h-12 rounded-full flex items-center justify-center transition-colors duration-300 shadow-lg bg-[#1A1A1A] text-white group-hover:bg-[#DC2626]"
+
           >
             <span className={`absolute h-[2px] w-5 bg-current rounded transition-all duration-300 ${menuOpen ? 'rotate-45' : '-translate-y-[4px]'}`} />
             <span className={`absolute h-[2px] w-5 bg-current rounded transition-all duration-300 ${menuOpen ? '-rotate-45' : 'translate-y-[4px]'}`} />
@@ -95,27 +94,24 @@ export default function Navbar() {
       </div>
 
       {/* Меню — цял екран, спуска се отгоре */}
-      <div ref={overlayRef} className="fixed inset-0 z-40 bg-[#1A1A1A] flex flex-col will-change-transform">
+      <div ref={overlayRef} className="fixed inset-0 z-40 bg-white flex flex-col will-change-transform">
         <div className="flex-1 flex items-center">
           <div className="section-padding w-full">
             <div className="container-max">
-              <nav className="flex flex-col gap-1 lg:gap-2">
-                {navLinks.map((link, i) => {
+              <nav className="flex flex-col items-end gap-6 lg:gap-7">
+                {navLinks.map(link => {
                   const active = location.pathname === link.path
                   return (
                     <Link
                       key={link.path}
                       to={link.path}
-                      className="menu-item group flex items-baseline gap-4 lg:gap-6 w-fit"
+                      className={`menu-item text-lg lg:text-[21px] uppercase tracking-[0.2em] transition-colors duration-300 ${
+                        active
+                          ? 'text-[#1A1A1A] underline underline-offset-[10px] decoration-[1.5px]'
+                          : 'text-[#1A1A1A]/75 hover:text-[#DC2626]'
+                      }`}
                     >
-                      <span className="text-[11px] font-medium text-[#DC2626]/70 tracking-wider">{String(i + 1).padStart(2, '0')}</span>
-                      <span
-                        className={`text-[clamp(30px,6vw,60px)] font-extralight leading-[1.15] tracking-tight transition-all duration-300 group-hover:translate-x-2 ${
-                          active ? 'text-[#DC2626]' : 'text-white/80 group-hover:text-white'
-                        }`}
-                      >
-                        {link.label}
-                      </span>
+                      {link.label}
                     </Link>
                   )
                 })}
@@ -125,14 +121,14 @@ export default function Navbar() {
         </div>
 
         {/* Контакти в основата на менюто */}
-        <div className="menu-foot border-t border-white/10">
+        <div className="menu-foot border-t border-[#1A1A1A]/10">
           <div className="section-padding py-6">
             <div className="container-max flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm font-light">
               <div className="flex items-center gap-6">
                 <a href="mailto:info@justpablo.bg" className="text-[#DC2626] hover:text-white transition-colors">info@justpablo.bg</a>
-                <a href="tel:0887654321" className="text-white/60 hover:text-white transition-colors">0887 654 321</a>
+                <a href="tel:0887654321" className="text-[#1A1A1A]/60 hover:text-[#1A1A1A] transition-colors">0887 654 321</a>
               </div>
-              <div className="text-white/40 text-xs uppercase tracking-[0.15em]">Варна — ул. Мария Луиза 47</div>
+              <div className="text-[#1A1A1A]/40 text-xs uppercase tracking-[0.15em]">Варна — ул. Мария Луиза 47</div>
             </div>
           </div>
         </div>

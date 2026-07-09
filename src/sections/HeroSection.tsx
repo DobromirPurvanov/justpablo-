@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
-import { Link } from 'react-router'
 import gsap from 'gsap'
 import LogoFace from '../components/LogoFace'
+import MagneticCta from '../components/MagneticCta'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -92,27 +92,7 @@ export default function HeroSection() {
             ref={circleRef}
             className="relative md:absolute md:bottom-0 md:right-0 lg:right-12 w-24 h-24 md:w-28 md:h-28 lg:w-36 lg:h-36 mt-8 md:mt-0 md:translate-y-[30%]"
           >
-            <Link to="/zapitvane" data-cursor="Запитване" className="relative w-full h-full block group">
-              {/* Rotating text */}
-              <svg viewBox="0 0 144 144" className="absolute inset-0 w-full h-full animate-spin-slow">
-                <defs>
-                  <path id="heroRing" d="M72,72 m-56,0 a56,56 0 1,1 112,0 a56,56 0 1,1 -112,0" />
-                </defs>
-                <text fill="#DC2626" fontSize="9" fontFamily="Montserrat, sans-serif" fontWeight="500" letterSpacing="2">
-                  <textPath href="#heroRing">
-                    ЗАПИТВАНЕ ЗА СЪТРУДНИЧЕСТВО • JUST PABLO •
-                  </textPath>
-                </text>
-              </svg>
-              {/* Arrow center */}
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-12 h-12 lg:w-16 lg:h-16 bg-[#DC2626] rounded-full flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-[#DC2626]/30 transition-all duration-300">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-                    <path d="M7 17L17 7M17 7H7M17 7V17" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </div>
-              </div>
-            </Link>
+            <MagneticCta className="w-full h-full" />
           </div>
         </div>
       </div>

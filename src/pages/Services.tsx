@@ -1,8 +1,8 @@
 import { useEffect, useRef } from 'react'
-import { Link } from 'react-router'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { drift, reveal } from '../lib/motion'
+import MagneticCta from '../components/MagneticCta'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -283,18 +283,6 @@ export default function Services() {
         if (sec) drift(blob, sec, { from: 40, to: -40, scrub: 1.5 })
       })
 
-      // CTA пръстенът се върти от скрола (almero стил)
-      const mm = gsap.matchMedia()
-      mm.add('(prefers-reduced-motion: no-preference)', () => {
-        const ring = el.querySelector('.svc-cta-ring')
-        const ringSec = ring?.closest('section')
-        if (ring && ringSec) {
-          gsap.to(ring, {
-            rotation: 160, ease: 'none',
-            scrollTrigger: { trigger: ringSec, start: 'top bottom', end: 'bottom top', scrub: 1 },
-          })
-        }
-      })
     }, el)
     return () => ctx.revert()
   }, [])
@@ -382,21 +370,7 @@ export default function Services() {
                 </p>
               </div>
               <div className="q-item lg:col-span-4 flex justify-center lg:justify-end">
-                <Link to="/zapitvane" data-cursor="Запитване" className="group relative w-32 h-32 md:h-40 md:w-40 lg:w-44 lg:h-44 flex items-center justify-center">
-                  <svg viewBox="0 0 180 180" className="svc-cta-ring absolute inset-0 w-full h-full">
-                    <defs>
-                      <path id="ctaCircleSvc" d="M 90, 90 m -70, 0 a 70,70 0 1,1 140,0 a 70,70 0 1,1 -140,0" />
-                    </defs>
-                    <text className="fill-[#DC2626] text-[9px] font-medium tracking-[0.15em] uppercase">
-                      <textPath href="#ctaCircleSvc">Направи запитване &bull; JustPablo &bull; </textPath>
-                    </text>
-                  </svg>
-                  <div className="w-16 h-16 md:w-20 md:h-20 lg:w-24 lg:h-24 bg-[#DC2626] rounded-full flex items-center justify-center group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-[#DC2626]/30 transition-all duration-300">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </div>
-                </Link>
+                <MagneticCta className="w-36 h-36 md:w-44 md:h-44 lg:w-48 lg:h-48" />
               </div>
             </div>
           </div>
