@@ -104,22 +104,48 @@ export default function ScrollWizard() {
   /* ─── Отговорът (вътре в кръга на desktop / плоско на мобилно) ─── */
   const answerArea = (
     <div className="w-full max-w-md mx-auto text-center">
-      {(q.type === 'radio' || q.type === 'checkbox') && q.options && (
+      {q.type === 'radio' && q.options && (
         <div className="flex flex-col items-center gap-4">
           {q.options.map(opt => {
-            const selected = q.type === 'radio'
-              ? formData[q.id] === opt
-              : ((formData[q.id] as string[]) || []).includes(opt)
-            const pick = () => {
-              if (q.type === 'radio') { setValue(q.id, opt); window.setTimeout(next, 300) }
-              else toggleCheckbox(q.id, opt)
-            }
+            const selected = formData[q.id] === opt
             return (
-              <button key={opt} onClick={pick} className="group flex items-center gap-3 text-left">
+              <button
+                key={opt}
+                aria-pressed={selected}
+                onClick={() => { setValue(q.id, opt); window.setTimeout(next, 300) }}
+                className="group flex items-center gap-3 text-left"
+              >
                 <span className={`transition-all duration-300 ${selected ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2 group-hover:opacity-60 group-hover:translate-x-0'}`}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="3">
                     <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
+                </span>
+                <span className={`text-lg lg:text-xl font-bold transition-colors duration-300 ${selected ? 'text-[#1A1A1A]' : 'text-[#1A1A1A]/75 group-hover:text-[#1A1A1A]'}`}>
+                  {opt}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      )}
+
+      {q.type === 'checkbox' && q.options && (
+        <div className="flex flex-col items-start gap-4 w-fit mx-auto">
+          {q.options.map(opt => {
+            const selected = ((formData[q.id] as string[]) || []).includes(opt)
+            return (
+              <button
+                key={opt}
+                aria-pressed={selected}
+                onClick={() => toggleCheckbox(q.id, opt)}
+                className="group flex items-center gap-3.5 text-left"
+              >
+                <span className={`w-[22px] h-[22px] rounded-[5px] border-2 flex items-center justify-center shrink-0 transition-all duration-300 ${selected ? 'bg-[#DC2626] border-[#DC2626]' : 'border-[#1A1A1A]/25 group-hover:border-[#DC2626]'}`}>
+                  {selected && (
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.5">
+                      <polyline points="20 6 9 17 4 12" />
+                    </svg>
+                  )}
                 </span>
                 <span className={`text-lg lg:text-xl font-bold transition-colors duration-300 ${selected ? 'text-[#1A1A1A]' : 'text-[#1A1A1A]/75 group-hover:text-[#1A1A1A]'}`}>
                   {opt}
