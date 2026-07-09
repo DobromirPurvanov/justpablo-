@@ -79,7 +79,7 @@ export default function Results() {
                     <path d="M42.5 120 Q 100 110, 150 90 T 250 70 T 350 50 T 450 30 T 540 15" stroke="#DC2626" strokeWidth="2" fill="none" strokeDasharray="5,5" />
                     {/* Label */}
                     <rect x="20" y="50" width="70" height="30" rx="4" fill="#DC2626" />
-                    <text x="55" y="70" textAnchor="middle" fill="white" fontSize="11" fontFamily="Montserrat" fontWeight="600">239 лв.</text>
+                    <text x="55" y="70" textAnchor="middle" fill="white" fontSize="11" fontFamily="Montserrat" fontWeight="600">122 €</text>
                     <text x="55" y="85" textAnchor="middle" fill="#1A1A1A" fontSize="9" fontFamily="Montserrat" opacity="0.5">цена на запитване</text>
                   </svg>
                 </div>

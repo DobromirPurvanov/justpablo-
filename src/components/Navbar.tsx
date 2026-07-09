@@ -5,6 +5,7 @@ import gsap from 'gsap'
 const navLinks = [
   { path: '/', label: 'Начало' },
   { path: '/uslugi', label: 'Услуги' },
+  { path: '/analiz', label: 'Анализ' },
   { path: '/rezultati', label: 'Резултати' },
   { path: '/strategiya', label: 'Стратегия' },
   { path: '/ceni', label: 'Цени' },
@@ -55,14 +56,11 @@ export default function Navbar() {
     <>
       {/* Fixed Logo - always visible */}
       <Link to="/" className="fixed top-6 left-6 z-50 flex items-center gap-3">
-        <div className="w-10 h-10 relative">
-          <svg viewBox="0 0 40 40" fill="none" className="w-full h-full">
-            <path d="M20 2C20 2 8 8 8 20C8 32 20 38 20 38C20 38 32 32 32 20C32 8 20 2 20 2Z" fill="#DC2626" />
-            <circle cx="20" cy="18" r="6" fill="white"/>
-            <circle cx="20" cy="26" r="3" fill="white"/>
-          </svg>
-        </div>
-        <span className="text-xl font-semibold tracking-tight text-[#1A1A1A]">JustPablo</span>
+        <img src="/images/logo-mark.png" alt="Just Pablo Digital" className="w-11 h-11 object-contain" />
+        <span className="flex flex-col leading-none">
+          <span className="text-xl font-semibold tracking-tight text-[#1A1A1A]">Just Pablo</span>
+          <span className="text-[9px] font-bold uppercase tracking-[0.32em] text-[#DC2626] mt-1">Digital</span>
+        </span>
       </Link>
 
       {/* Desktop Vertical Navigation - Right Side - hides on scroll down */}

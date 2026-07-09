@@ -3,23 +3,40 @@ import { Link } from 'react-router'
 import { ArrowRight, Check, ChevronDown } from 'lucide-react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { bgn, bgnRange } from '../lib/currency'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const pricingPlans = [
+type PricingPlan = {
+  name: string
+  price: string
+  priceBgn?: string
+  period: string
+  accent: string
+  features: string[]
+  cta: string
+  link: string
+  detailsLink?: string
+  popular: boolean
+}
+
+const pricingPlans: PricingPlan[] = [
   {
-    name: 'Premium SEO Analysis',
-    price: '950 лв.',
+    name: 'Premium Digital Analysis',
+    price: '485 €',
+    priceBgn: bgn(485),
     period: 'еднократно',
     accent: '#DC2626',
-    features: ['Технически SEO Одит', 'Индексация и Crawl Анализ', 'Структура и Архитектура', 'On-page SEO', 'Keyword & Intent Анализ', 'Конкурентен Анализ', 'Content GAP Анализ', 'EEAT & Brand Trust', 'Schema / Rich Snippets', 'Backlink Профил', 'Conversion SEO', 'Финален Доклад (PDF)'],
+    features: ['Технически SEO Одит', 'On-page SEO и Съдържание', 'Backlink и Authority Профил', 'Уебсайт, UX и Конверсии', 'Социални мрежи Одит', 'Meta Ads Одит', 'Google Ads Одит', 'Бранд и Позициониране', 'Конкурентен Анализ', 'Аналитика и Данни', 'Email и Автоматизации', 'Финален Доклад и План'],
     cta: 'Заяви анализ',
     link: '/zapitvane',
+    detailsLink: '/analiz',
     popular: false,
   },
   {
     name: 'Monthly Management',
-    price: '400–500 лв.',
+    price: '205–255 €',
+    priceBgn: bgnRange(205, 255),
     period: '/месец',
     accent: '#9BFF00',
     features: ['Технически мониторинг и поддръжка', 'On-page Оптимизация (текуща)', 'Вътрешно линкване', 'Месечен анализ и отчет', 'Конкурентно разузнаване', 'SEO Management & Oversight', 'Корекции през CMS', 'Приоритизация на задачи'],
@@ -39,31 +56,33 @@ const pricingPlans = [
   },
 ]
 
-const webServices = [
-  { name: 'Изработка на уебсайт', from: 'от 1500 лв.' },
-  { name: 'Онлайн магазин', from: 'от 3000 лв.' },
+type ServiceItem = { name: string; from: string; fromBgn?: string }
+
+const webServices: ServiceItem[] = [
+  { name: 'Изработка на уебсайт', from: 'от 765 €', fromBgn: bgn(765) },
+  { name: 'Онлайн магазин', from: 'от 1535 €', fromBgn: bgn(1535) },
   { name: 'WEB приложение', from: 'по договаряне' },
-  { name: 'Уеб дизайн (UI/UX)', from: 'от 800 лв.' },
-  { name: 'SEO оптимизация на сайт', from: 'от 500 лв.' },
-  { name: 'Поддръжка на сайт', from: 'от 200 лв./мес.' },
+  { name: 'Уеб дизайн (UI/UX)', from: 'от 410 €', fromBgn: bgn(410) },
+  { name: 'SEO оптимизация на сайт', from: 'от 255 €', fromBgn: bgn(255) },
+  { name: 'Поддръжка на сайт', from: 'от 100 €/мес.', fromBgn: `${bgn(100)}/мес.` },
 ]
 
-const adServices = [
-  { name: 'Facebook & Instagram реклами', from: 'от 500 лв./мес.' },
-  { name: 'Google Ads management', from: 'от 500 лв./мес.' },
-  { name: 'E-mail маркетинг', from: 'от 300 лв./мес.' },
-  { name: 'Управление на социални мрежи', from: 'от 600 лв./мес.' },
-  { name: 'Копирайтинг', from: 'от 50 лв./час' },
+const adServices: ServiceItem[] = [
+  { name: 'Facebook & Instagram реклами', from: 'от 255 €/мес.', fromBgn: `${bgn(255)}/мес.` },
+  { name: 'Google Ads management', from: 'от 255 €/мес.', fromBgn: `${bgn(255)}/мес.` },
+  { name: 'E-mail маркетинг', from: 'от 155 €/мес.', fromBgn: `${bgn(155)}/мес.` },
+  { name: 'Управление на социални мрежи', from: 'от 305 €/мес.', fromBgn: `${bgn(305)}/мес.` },
+  { name: 'Копирайтинг', from: 'от 25 €/час', fromBgn: `${bgn(25)}/час` },
   { name: 'Фотография и видео', from: 'по договаряне' },
 ]
 
 const faqs = [
-  { q: 'Защо цената на SEO Анализа е публична?', a: 'Защото това е единственият етап, който не зависи от спецификите на бизнеса. Всички останали услуги се ценообразуват персонално след одита.' },
-  { q: 'Може ли да се започне директно с месечно обслужване?', a: 'Не. Без преминат Premium SEO Analysis не изготвяме оферта за SEO абонамент. Одитът е задължителен етап.' },
+  { q: 'Защо цената на Дигиталния Анализ е публична?', a: 'Защото това е единственият етап, който не зависи от спецификите на бизнеса. Всички останали услуги се ценообразуват персонално след анализа.' },
+  { q: 'Може ли да се започне директно с месечно обслужване?', a: 'Не. Без преминат Premium Digital Analysis не изготвяме оферта за месечен абонамент. Анализът е задължителен етап.' },
   { q: 'Как работи Performance моделът?', a: 'След одита се определя списък от ключови думи с индивидуална тарифа. Плащането се начислява само при постигнат резултат — TOP 10 или TOP 3.' },
   { q: 'Има ли отстъпки при дългосрочен договор?', a: 'Да. 5% отстъпка при 6 месеца предплащане, 10% при 12 месеца.' },
   { q: 'Каква е минималната ангажираност?', a: 'Препоръчваме минимум 6 месеца за видими резултати. Performance моделът е гъвкав.' },
-  { q: 'Как се плаща?', a: 'SEO Анализ — 50% аванс, 50% при завършване. Месечно обслужване — авансово. Performance — отчет на месечна база.' },
+  { q: 'Как се плаща?', a: 'Дигитален Анализ — 50% аванс, 50% при завършване. Месечно обслужване — авансово. Performance — отчет на месечна база.' },
 ]
 
 export default function Pricing() {
@@ -93,7 +112,7 @@ export default function Pricing() {
         <div className="section-padding">
           <div className="container-max">
             <div className="mb-8">
-              <span className="text-[10px] uppercase tracking-[0.2em] font-light text-[#DC2626]">SEO услуги</span>
+              <span className="text-[10px] uppercase tracking-[0.2em] font-light text-[#DC2626]">Анализ и SEO пакети</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8">
               {pricingPlans.map((plan) => (
@@ -102,6 +121,7 @@ export default function Pricing() {
                   <div className="w-full h-1 rounded-full mb-8" style={{ backgroundColor: plan.accent }} />
                   <div className="text-xs font-light uppercase tracking-wider text-[#1A1A1A]/30 mb-2">{plan.name}</div>
                   <div className="text-4xl lg:text-5xl font-extralight text-[#1A1A1A] mb-1">{plan.price}</div>
+                  {plan.priceBgn && <div className="text-sm font-light text-[#1A1A1A]/40 mb-1">{plan.priceBgn}</div>}
                   <div className="text-xs font-light text-[#1A1A1A]/30 mb-8 uppercase tracking-wider">{plan.period}</div>
                   <div className="flex flex-col gap-2.5 mb-8">
                     {plan.features.map(f => (
@@ -111,6 +131,13 @@ export default function Pricing() {
                       </div>
                     ))}
                   </div>
+                  {plan.detailsLink && (
+                    <div className="mb-6 -mt-4">
+                      <Link to={plan.detailsLink} className="inline-flex items-center gap-1 text-xs font-medium text-[#DC2626] hover:gap-2 transition-all duration-300">
+                        Виж пълното съдържание на анализа <ArrowRight size={12} />
+                      </Link>
+                    </div>
+                  )}
                   <Link to={plan.link} className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-full text-sm font-medium transition-all duration-300 hover:scale-[1.02]" style={{ backgroundColor: plan.accent, color: plan.accent === '#9BFF00' ? '#1A1A1A' : '#FFFFFF' }}>
                     {plan.cta} <ArrowRight size={14} />
                   </Link>
@@ -133,7 +160,10 @@ export default function Pricing() {
               {webServices.map(s => (
                 <div key={s.name} className="flex items-center justify-between bg-[#F5F5F5] rounded-xl px-6 py-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300">
                   <span className="text-sm font-light text-[#1A1A1A]">{s.name}</span>
-                  <span className="text-sm font-medium text-[#DC2626]">{s.from}</span>
+                  <span className="text-right shrink-0 pl-4">
+                    <span className="block text-sm font-medium text-[#DC2626]">{s.from}</span>
+                    {s.fromBgn && <span className="block text-[11px] font-light text-[#1A1A1A]/35 mt-0.5">{s.fromBgn}</span>}
+                  </span>
                 </div>
               ))}
             </div>
@@ -153,7 +183,10 @@ export default function Pricing() {
               {adServices.map(s => (
                 <div key={s.name} className="flex items-center justify-between bg-white rounded-xl px-6 py-5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-300">
                   <span className="text-sm font-light text-[#1A1A1A]">{s.name}</span>
-                  <span className="text-sm font-medium text-[#DC2626]">{s.from}</span>
+                  <span className="text-right shrink-0 pl-4">
+                    <span className="block text-sm font-medium text-[#DC2626]">{s.from}</span>
+                    {s.fromBgn && <span className="block text-[11px] font-light text-[#1A1A1A]/35 mt-0.5">{s.fromBgn}</span>}
+                  </span>
                 </div>
               ))}
             </div>
@@ -187,9 +220,9 @@ export default function Pricing() {
         <div className="section-padding">
           <div className="container-max text-center">
             <h2 className="font-thin-display text-[clamp(32px,5vw,60px)] text-white mb-8">Всичко започва от едно място</h2>
-            <p className="text-base font-light text-white/40 mb-8 max-w-xl mx-auto">Premium SEO Analysis — 950 лв. Единствената публична цена.</p>
+            <p className="text-base font-light text-white/40 mb-8 max-w-xl mx-auto">Premium Digital Analysis — 485 € ({bgn(485)}). Единствената публична цена.</p>
             <Link to="/zapitvane" className="inline-flex items-center gap-3 bg-[#DC2626] text-white px-10 py-5 rounded-full text-lg font-medium hover:bg-[#E64922] hover:scale-[1.02] transition-all duration-300">
-              Заяви SEO Анализ <ArrowRight size={22} />
+              Заяви Дигитален Анализ <ArrowRight size={22} />
             </Link>
           </div>
         </div>

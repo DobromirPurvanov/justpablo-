@@ -3,30 +3,43 @@ import { Link } from 'react-router'
 import { ArrowRight, Check, ChevronRight } from 'lucide-react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { bgn } from '../lib/currency'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const roadmaps = [
+type Roadmap = {
+  phase: string
+  title: string
+  subtitle: string
+  price: string
+  priceBgn?: string
+  period: string
+  color: string
+  items: string[]
+}
+
+const roadmaps: Roadmap[] = [
   {
     phase: 'Фаза 1',
-    title: 'Premium SEO Analysis',
-    subtitle: 'Диагностика и анализ',
-    price: '950 лв.',
+    title: 'Premium Digital Analysis',
+    subtitle: 'Пълна дигитална диагностика',
+    price: '485 €',
+    priceBgn: bgn(485),
     period: 'еднократно',
     color: '#DC2626',
     items: [
       'Технически SEO Одит',
-      'Индексация и Crawl Анализ',
-      'Структура и Архитектура',
-      'On-page SEO',
-      'Keyword & Intent Анализ',
+      'On-page SEO и Съдържание',
+      'Backlink и Authority Профил',
+      'Уебсайт, UX и Конверсии',
+      'Социални мрежи Одит',
+      'Meta Ads Одит',
+      'Google Ads Одит',
+      'Бранд и Позициониране',
       'Конкурентен Анализ',
-      'Content GAP Анализ',
-      'EEAT & Brand Trust',
-      'Schema / Rich Snippets',
-      'Backlink Профил',
-      'Conversion SEO',
-      'Финален Доклад (PDF)',
+      'Аналитика и Данни',
+      'Email и Автоматизации',
+      'Финален Доклад и План',
     ],
   },
   {
@@ -58,7 +71,7 @@ const roadmaps = [
     items: [
       'Всичко от Фаза 1',
       'Всичко от Фаза 2',
-      'Месечно SEO Обслужване',
+      'Месечно дигитално обслужване',
       'Content Management',
       'Link Building Management',
       'Performance SEO модел',
@@ -126,6 +139,7 @@ export default function Strategy() {
                       </div>
                       <div className="mt-6">
                         <div className="text-3xl lg:text-4xl font-extralight" style={{ color: roadmap.color }}>{roadmap.price}</div>
+                        {roadmap.priceBgn && <div className="text-sm font-light text-[#1A1A1A]/40 mt-1">{roadmap.priceBgn}</div>}
                         <div className="text-xs font-light text-[#1A1A1A]/30 mt-1 uppercase tracking-wider">{roadmap.period}</div>
                       </div>
                     </div>
@@ -181,10 +195,10 @@ export default function Strategy() {
               Всичко започва от едно място
             </h2>
             <p className="text-base font-light text-white/40 mb-8 max-w-xl mx-auto">
-              Premium SEO Analysis — 950 лв. Единствената публична цена. Задължителен етап за всички клиенти.
+              Premium Digital Analysis — 485 € ({bgn(485)}). Единствената публична цена. Задължителен етап за всички клиенти.
             </p>
             <Link to="/zapitvane" className="inline-flex items-center gap-3 bg-[#DC2626] text-white px-10 py-5 rounded-full text-lg font-medium hover:bg-[#E64922] hover:scale-[1.02] transition-all duration-300">
-              Заяви SEO Анализ <ArrowRight size={22} />
+              Заяви Дигитален Анализ <ArrowRight size={22} />
             </Link>
           </div>
         </div>
