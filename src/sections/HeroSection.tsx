@@ -22,6 +22,9 @@ export default function HeroSection() {
     tl.from('.hero-sub', {
       y: 24, opacity: 0, duration: 0.8, ease: 'power3.out',
     }, '-=0.7')
+    tl.from('.hero-video-wrap', {
+      opacity: 0, scale: 0.97, duration: 1.4, ease: 'power2.out',
+    }, 0.15)
     tl.from(circleRef.current, {
       scale: 0, opacity: 0, duration: 0.8, ease: 'back.out(1.7)',
     }, '-=0.6')
@@ -37,6 +40,7 @@ export default function HeroSection() {
         const st = { trigger: sectionRef.current, start: 'top top', end: 'bottom top', scrub: 1 }
         gsap.to(titleRef.current, { y: -90, ease: 'none', scrollTrigger: st })
         gsap.to(circleRef.current, { y: 70, ease: 'none', scrollTrigger: st })
+        gsap.to('.hero-video-wrap', { y: 45, ease: 'none', scrollTrigger: st })
       })
     }, sectionRef)
     return () => ctx.revert()
@@ -51,6 +55,23 @@ export default function HeroSection() {
       <div className="absolute top-[15%] right-[8%] w-[300px] h-[300px] lg:w-[450px] lg:h-[450px] rounded-full bg-[#DC2626]/[0.04] blur-3xl pointer-events-none" />
       <div className="absolute bottom-[10%] left-[5%] w-[200px] h-[200px] lg:w-[350px] lg:h-[350px] rounded-full bg-[#DC2626]/[0.03] blur-3xl pointer-events-none" />
       
+      {/* Анимирано лого — фоново видео, слива се с бялото чрез multiply */}
+      <div
+        className="hero-video-wrap absolute right-[-5%] top-[10%] w-[46vw] max-w-[660px] hidden lg:block pointer-events-none select-none motion-reduce:hidden"
+        aria-hidden="true"
+      >
+        <video
+          src="/videos/logo-loop.mp4"
+          poster="/videos/logo-loop-poster.jpg"
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          className="w-full h-auto mix-blend-multiply"
+        />
+      </div>
+
       {/* Subtle grid pattern overlay */}
       <div 
         className="absolute inset-0 opacity-[0.015] pointer-events-none"
