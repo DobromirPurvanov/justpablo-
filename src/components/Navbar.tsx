@@ -123,6 +123,17 @@ export default function Navbar() {
                     </Link>
                   )
                 })}
+                <button
+                  onClick={() => {
+                    setMenuOpen(false)
+                    window.setTimeout(() => {
+                      document.getElementById('contacts')?.scrollIntoView({ behavior: 'smooth' })
+                    }, 550)
+                  }}
+                  className="menu-item text-lg lg:text-[21px] uppercase tracking-[0.2em] text-[#1A1A1A]/75 hover:text-[#DC2626] transition-colors duration-300"
+                >
+                  Контакти
+                </button>
               </nav>
             </div>
           </div>

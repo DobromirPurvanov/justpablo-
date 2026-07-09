@@ -78,6 +78,18 @@ function PortfolioItem({ project }: { project: Project }) {
       const frame = el.querySelector('.pc-frame')
       const wrap = el.querySelector('.pc-imgwrap')
       if (frame && wrap) imageParallax(wrap, frame)
+
+      // Активен проект в центъра на екрана — останалите се приглушават (almero)
+      const mm = gsap.matchMedia()
+      mm.add('(prefers-reduced-motion: no-preference)', () => {
+        gsap.set(el, { opacity: 0.45 })
+        ScrollTrigger.create({
+          trigger: el,
+          start: 'top 62%',
+          end: 'bottom 38%',
+          onToggle: self => gsap.to(el, { opacity: self.isActive ? 1 : 0.45, duration: 0.5, ease: 'power2.out' }),
+        })
+      })
     }, el)
     return () => ctx.revert()
   }, [])

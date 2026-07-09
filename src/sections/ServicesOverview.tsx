@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { Link } from 'react-router'
 import gsap from 'gsap'
-import { drift, reveal } from '../lib/motion'
+import { reveal } from '../lib/motion'
 
 const pillars = [
   {
@@ -51,17 +51,25 @@ export default function ServicesOverview() {
       reveal('.so-title', el, { y: 40 })
       reveal('.so-circle', el, { scale: 0.94, y: 0, duration: 1 })
       reveal('.so-pillar', el, { stagger: 0.15, delay: 0.15 })
-      drift('.so-watermark', el, { from: 50, to: -50, scrub: 1.5 })
+
+      // Гигантското заглавие се плъзга хоризонтално (almero title-content)
+      const mm = gsap.matchMedia()
+      mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
+        gsap.fromTo('.so-bigtitle',
+          { x: '6vw' },
+          { x: '-12vw', ease: 'none', scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: 1 } }
+        )
+      })
     }, el)
     return () => ctx.revert()
   }, [])
 
   return (
     <section ref={sectionRef} className="bg-white py-20 lg:py-32 relative overflow-hidden">
-      {/* Фонов воден знак с лек дрифт */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none z-0">
-        <span className="so-watermark block font-ultra-thin text-[clamp(60px,12vw,180px)] text-[#1A1A1A]/[0.03] tracking-[0.4em] whitespace-nowrap">
-          УСЛУГИ
+      {/* Гигантско плъзгащо се секционно заглавие (almero) */}
+      <div className="mb-12 lg:mb-20 pointer-events-none select-none">
+        <span className="so-bigtitle block font-ultra-thin whitespace-nowrap text-[clamp(72px,15vw,210px)] leading-none text-[#1A1A1A] will-change-transform">
+          &nbsp;Услуги
         </span>
       </div>
 

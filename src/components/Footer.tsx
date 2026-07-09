@@ -13,7 +13,7 @@ const navLinks = [
 
 export default function Footer() {
   return (
-    <footer className="bg-[#1A1A1A] text-white">
+    <footer id="contacts" className="bg-[#1A1A1A] text-white">
       {/* Main content */}
       <div className="section-padding py-20 lg:py-32">
         <div className="container-max">
