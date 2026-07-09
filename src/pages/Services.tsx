@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { drift, reveal } from '../lib/motion'
+import { countUp, drift, reveal } from '../lib/motion'
+import NextPage from '../components/NextPage'
 import MagneticCta from '../components/MagneticCta'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -118,6 +119,7 @@ function PhaseCircle({ months, period, stats }: {
       gsap.from('.pc-month', { opacity: 0, y: 12, duration: 0.45, stagger: 0.06, delay: 0.25, ease: 'power2.out', scrollTrigger: st })
       gsap.from('.pc-swoosh', { scaleX: 0, transformOrigin: 'left center', duration: 0.7, stagger: 0.08, delay: 0.3, ease: 'power3.out', scrollTrigger: st })
       gsap.from('.pc-stat-val', { x: 36, opacity: 0, duration: 0.6, stagger: 0.08, delay: 0.4, ease: 'power3.out', clearProps: 'transform', scrollTrigger: st })
+      el.querySelectorAll('.pc-stat-num').forEach((num, i) => countUp(num, { trigger: el, delay: 0.5 + i * 0.08 }))
       const circle = el.querySelector('.pc-circle')
       if (circle) drift(circle, el, { from: 18, to: -18, scrub: 1.2 })
     }, el)
@@ -172,7 +174,7 @@ function PhaseCircle({ months, period, stats }: {
               </svg>
               <div className="pc-stat-val relative z-10 text-right">
                 <div className="flex items-center justify-end gap-2">
-                  <span className="text-[clamp(30px,3vw,52px)] font-extralight text-[#1A1A1A] leading-none tracking-tight">{s.value}</span>
+                  <span className="pc-stat-num text-[clamp(30px,3vw,52px)] font-extralight text-[#1A1A1A] leading-none tracking-tight">{s.value}</span>
                   <span className="w-2.5 h-2.5 rounded-full bg-[#DC2626] shrink-0" />
                 </div>
                 <div className="text-xs font-medium text-[#1A1A1A]/60 mt-1.5 mr-4">{s.label}</div>
@@ -189,7 +191,7 @@ function PhaseCircle({ months, period, stats }: {
             <div key={s.label} className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#DC2626] shrink-0" />
               <div>
-                <span className="text-lg font-extralight text-[#1A1A1A] leading-none">{s.value}</span>
+                <span className="pc-stat-num text-lg font-extralight text-[#1A1A1A] leading-none">{s.value}</span>
                 <span className="text-[10px] font-medium text-[#1A1A1A]/60 ml-1.5">{s.label}</span>
               </div>
             </div>
@@ -376,6 +378,8 @@ export default function Services() {
           </div>
         </div>
       </section>
+
+      <NextPage to="/rezultati" label="Резултати" />
     </div>
   )
 }

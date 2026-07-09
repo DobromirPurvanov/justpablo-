@@ -139,3 +139,24 @@ export function wordsReveal(paragraph: Element) {
     }
   )
 }
+
+/** Число, което брои от 0 до целта при влизане в екрана (almero counter).
+    Работи с "+420%", "28%", "-15%" — префиксът и суфиксът се запазват.
+    Стойности без водеща цифра (напр. "x3") остават статични. */
+export function countUp(el: Element, opts: { delay?: number; duration?: number; trigger?: Element | null } = {}) {
+  const raw = el.textContent ?? ''
+  const m = raw.match(/^([+\-]?)(\d+)([\s\S]*)$/)
+  if (!m) return
+  const [, prefix, numStr, suffix] = m
+  const target = parseInt(numStr, 10)
+  const state = { v: 0 }
+  el.textContent = `${prefix}0${suffix}`
+  gsap.to(state, {
+    v: target,
+    duration: opts.duration ?? 1.3,
+    delay: opts.delay ?? 0,
+    ease: 'power2.out',
+    scrollTrigger: opts.trigger ? { trigger: opts.trigger, start: 'top 82%', once: true } : undefined,
+    onUpdate: () => { el.textContent = `${prefix}${Math.round(state.v)}${suffix}` },
+  })
+}

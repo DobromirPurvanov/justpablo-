@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from 'react'
 import { ArrowUpRight, Phone } from 'lucide-react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { wordsReveal } from '../lib/motion'
+import { countUp, wordsReveal } from '../lib/motion'
 import MagneticCta from '../components/MagneticCta'
+import NextPage from '../components/NextPage'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -13,6 +14,39 @@ const questions = [
   { q: 'Каква комбинация от онлайн реклама привлича ефективно нови клиенти?', a: 'Анализираме ефективността на всеки канал — Google Ads, Facebook, Instagram, SEO, email маркетинг. На база данни, изготвяме оптимална мултиканална стратегия, която максимизира ROI.' },
   { q: 'Колко ми струва една продажба?', a: 'Проследяваме целия път на клиента — от първия клик до финализираната продажба. Така определяме Cost Per Acquisition (CPA) и ви даваме яснота кои канали носят най-печеливши клиенти.' },
   { q: 'Каква е рецептата бизнесът ви да расте печелившо и предвидимо?', a: 'Комбинация от data-driven маркетинг, непрекъсната оптимизация и прозрачна отчетност. Работим с ясни KPI-та, месечни цели и регулярни ревюта, за да гарантираме устойчив растеж.' },
+]
+
+const caseStudies = [
+  {
+    name: 'Alpha Motors', business: 'Авточасти / E-commerce',
+    bullets: ['Технически SEO одит и оптимизация', 'Ново съдържание за 200+ категории', 'Дългосрочна линк билдинг кампания'],
+    strategy: 'Започнахме от основите — техническо изчистване на магазина и структура, която Google разбира. След това изградихме съдържание около реалните търсения на клиентите и постепенно наложихме домейна като авторитет в нишата.',
+    highlightDesc: 'Органичен трафик', highlight: '+420%',
+  },
+  {
+    name: 'Dinkovi', business: 'Строителство',
+    bullets: ['Ново позициониране чрез нов сайт', 'Локална SEO стратегия за региона', 'Професионална фотография на обектите'],
+    strategy: 'Семейна фирма с отлична репутация офлайн, но невидима онлайн. Изградихме дигитално присъствие от нулата — сайт, локални позиции и портфолио, което продава само. Днес запитванията идват предимно от Google.',
+    highlightDesc: 'Онлайн запитвания', highlight: '+580%',
+  },
+  {
+    name: 'Arcanum Group', business: 'Бизнес консултации',
+    bullets: ['Цялостна дигитална стратегия', 'Съдържание с експертен авторитет', 'LinkedIn и социално присъствие'],
+    strategy: 'В консултантския бизнес доверието е всичко. Фокусирахме се върху експертно съдържание и последователно присъствие, което позиционира бранда като първи избор в нишата — преди клиентът изобщо да е попитал.',
+    highlightDesc: 'Онлайн присъствие', highlight: 'x3',
+  },
+  {
+    name: 'Astrafolio', business: 'Инвестиции',
+    bullets: ['Брандинг и визуална идентичност', 'SEO за конкурентни финансови термини', 'Съдържателна стратегия за доверие'],
+    strategy: 'От стартиращ проект до разпознаваем бранд за под 2 години. Комбинирахме силна визуална идентичност с търпелива SEO работа по най-трудните термини в сектора — и търсенията по име на бранда изпревариха очакванията.',
+    highlightDesc: 'Бранд търсения', highlight: '+315%',
+  },
+  {
+    name: 'CC78', business: 'E-commerce',
+    bullets: ['Доминация в нишови ключови думи', 'Оптимизация на конверсиите', 'Ремаркетинг и email автоматизации'],
+    strategy: 'Вместо да се борим за най-скъпите думи, картографирахме цялата ниша и завзехме дългата опашка от търсения една по една. Резултатът — топ позиции по всички ключови термини в категорията и стабилно растящи продажби.',
+    highlightDesc: 'Топ позиции в нишата', highlight: '100%',
+  },
 ]
 
 export default function Results() {
@@ -47,6 +81,16 @@ export default function Results() {
         // Дума по дума просветване на големите параграфи (almero стил)
         gsap.utils.toArray<HTMLElement>('.w-reveal').forEach(p => wordsReveal(p))
 
+      })
+
+      // Казусите — ред по ред + броящи числа
+      gsap.utils.toArray<HTMLElement>('.case-row').forEach(row => {
+        gsap.from(row.querySelectorAll('.case-cell'), {
+          scrollTrigger: { trigger: row, start: 'top 85%', once: true },
+          y: 26, opacity: 0, duration: 0.7, stagger: 0.08, ease: 'power3.out', clearProps: 'transform',
+        })
+        const num = row.querySelector('.case-num')
+        if (num) countUp(num, { trigger: row, delay: 0.35 })
       })
 
       // Телефонната секция — каскада
@@ -173,6 +217,55 @@ export default function Results() {
         </div>
       </section>
 
+      {/* ─── КАЗУСИ — almero таблица ─── */}
+      <section className="bg-white py-16 lg:py-24 border-t border-[#1A1A1A]/[0.06]">
+        <div className="section-padding">
+          <div className="container-max">
+            <div className="mb-12 lg:mb-16">
+              <span className="text-[10px] uppercase tracking-[0.2em] font-light text-[#DC2626]">Реални казуси</span>
+              <h2 className="font-thin-display text-3xl lg:text-5xl text-[#1A1A1A] leading-tight mt-3 max-w-2xl">
+                Числата зад думите
+              </h2>
+            </div>
+
+            {/* Хедър на таблицата — desktop */}
+            <div className="hidden lg:grid grid-cols-12 gap-6 pb-4 border-b border-[#1A1A1A]/10 text-[10px] uppercase tracking-[0.18em] font-medium text-[#1A1A1A]/40">
+              <div className="col-span-3">Клиент</div>
+              <div className="col-span-3">Дейност</div>
+              <div className="col-span-4">Стратегия</div>
+              <div className="col-span-2 text-right">Резултат</div>
+            </div>
+
+            {caseStudies.map(c => (
+              <div key={c.name} className="case-row grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 py-8 lg:py-10 border-b border-[#1A1A1A]/[0.08]">
+                <div className="case-cell lg:col-span-3">
+                  <div className="text-lg font-bold text-[#1A1A1A]">{c.name}</div>
+                  <div className="text-xs font-light text-[#1A1A1A]/50 mt-1">{c.business}</div>
+                </div>
+                <div className="case-cell lg:col-span-3">
+                  <div className="lg:hidden text-[10px] uppercase tracking-[0.18em] font-medium text-[#1A1A1A]/40 mb-2">Дейност</div>
+                  <ul className="flex flex-col gap-2">
+                    {c.bullets.map(b => (
+                      <li key={b} className="flex items-start gap-2 text-sm font-light text-[#1A1A1A]/75 leading-snug">
+                        <span className="w-1 h-1 rounded-full bg-[#DC2626] mt-2 shrink-0" />{b}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="case-cell lg:col-span-4">
+                  <div className="lg:hidden text-[10px] uppercase tracking-[0.18em] font-medium text-[#1A1A1A]/40 mb-2">Стратегия</div>
+                  <p className="text-sm font-light text-[#1A1A1A]/70 leading-relaxed">{c.strategy}</p>
+                </div>
+                <div className="case-cell lg:col-span-2 lg:text-right">
+                  <div className="text-xs font-light text-[#1A1A1A]/50 mb-1">{c.highlightDesc}</div>
+                  <div className="case-num text-[clamp(36px,4vw,56px)] font-extralight text-[#DC2626] leading-none">{c.highlight}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ─── PHONE TRACKING DEMO ─── */}
       <section className="phone-section bg-[#F5F5F5] py-20 lg:py-32">
         <div className="section-padding">
@@ -243,6 +336,8 @@ export default function Results() {
           </div>
         </div>
       </section>
+
+      <NextPage to="/strategiya" label="Стратегия" />
     </div>
   )
 }
