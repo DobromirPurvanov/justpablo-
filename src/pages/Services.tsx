@@ -101,7 +101,8 @@ const phases = [
   },
 ]
 
-/* ───────────────  Phase Circle (чист, без scrub)  ─────────────── */
+/* ───────────────  Phase Circle — almero стил: плосък кръг,
+   вертикална ос с месеци, статистики със swoosh комети  ─────────────── */
 function PhaseCircle({ months, period, stats }: {
   months: string[]; period: string; stats: { value: string; label: string }[]
 }) {
@@ -112,87 +113,84 @@ function PhaseCircle({ months, period, stats }: {
     if (!el) return
     const ctx = gsap.context(() => {
       const st = { trigger: el, start: 'top 80%', once: true as const }
-      gsap.from('.pc-disc', { scale: 0.92, opacity: 0, duration: 0.9, ease: 'power3.out', scrollTrigger: st })
-      const circle = el.querySelector('.pc-circle')
-      if (circle) drift(circle, el, { from: 24, to: -24, scrub: 1.2 })
+      gsap.from('.pc-disc', { scale: 0.9, opacity: 0, duration: 0.9, ease: 'power3.out', scrollTrigger: st })
       gsap.from('.pc-period', { scale: 0.8, opacity: 0, duration: 0.7, delay: 0.2, ease: 'back.out(1.6)', scrollTrigger: st })
-      gsap.from('.pc-month', { opacity: 0, scale: 0.5, duration: 0.45, stagger: 0.05, delay: 0.3, ease: 'power2.out', scrollTrigger: st })
-      gsap.from('.pc-stat', { y: 14, opacity: 0, duration: 0.6, stagger: 0.07, delay: 0.45, ease: 'power3.out', clearProps: 'transform', scrollTrigger: st })
+      gsap.from('.pc-month', { opacity: 0, y: 12, duration: 0.45, stagger: 0.06, delay: 0.25, ease: 'power2.out', scrollTrigger: st })
+      gsap.from('.pc-swoosh', { scaleX: 0, transformOrigin: 'left center', duration: 0.7, stagger: 0.08, delay: 0.3, ease: 'power3.out', scrollTrigger: st })
+      gsap.from('.pc-stat-val', { x: 36, opacity: 0, duration: 0.6, stagger: 0.08, delay: 0.4, ease: 'power3.out', clearProps: 'transform', scrollTrigger: st })
+      const circle = el.querySelector('.pc-circle')
+      if (circle) drift(circle, el, { from: 18, to: -18, scrub: 1.2 })
     }, el)
     return () => ctx.revert()
   }, [])
 
-  const sizeClasses = months.length > 9
-    ? 'w-[300px] h-[300px] md:w-[400px] md:h-[400px] lg:w-[440px] lg:h-[440px]'
-    : months.length > 5
-      ? 'w-[280px] h-[280px] md:w-[360px] md:h-[360px] lg:w-[400px] lg:h-[400px]'
-      : 'w-[260px] h-[260px] md:w-[320px] md:h-[320px] lg:w-[360px] lg:h-[360px]'
+  // хоризонтални отмествания на статистиките отдясно (органичното "разбъркано" подреждане)
+  const offsets = [8, 120, 64, 104, 0]
 
   return (
-    <div ref={wrapRef} className="flex flex-col items-center">
-      <div className={`pc-circle relative ${sizeClasses}`}>
-        <div className="pc-disc absolute inset-0">
-          {/* Диск с градиент */}
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#DC2626] to-[#B91C1C] shadow-xl shadow-[#DC2626]/20" />
-          <div className="absolute inset-[10%] rounded-full border border-white/10" />
-          <div className="absolute inset-[20%] rounded-full border border-white/5" />
-
-          {/* Декоративни точки — бавно въртене (само точки, без текст) */}
-          <div className="absolute inset-0 animate-spin-slow">
-            {Array.from({ length: 12 }).map((_, i) => {
-              const a = (i / 12) * Math.PI * 2
-              return (
-                <div key={`dot-${i}`}
-                  className="absolute w-1 h-1 rounded-full bg-white/25"
-                  style={{
-                    left: `${50 + 47 * Math.cos(a)}%`,
-                    top: `${50 + 47 * Math.sin(a)}%`,
-                    transform: 'translate(-50%, -50%)',
-                  }}
-                />
-              )
-            })}
-          </div>
-        </div>
-
-        {/* Централен период */}
-        <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none">
-          <span className="pc-period text-white text-4xl md:text-5xl lg:text-6xl font-bold drop-shadow-md">{period}</span>
-        </div>
-
-        {/* Месеци около кръга — изправени, равномерно разпределени */}
-        {months.map((m, i) => {
-          const angle = -Math.PI / 2 + (i / months.length) * Math.PI * 2
-          return (
-            <div key={m}
-              className="absolute z-10"
+    <div ref={wrapRef} className="relative w-full flex flex-col items-center lg:items-start">
+      {/* Кръг + вертикална ос на месеците */}
+      <div className="pc-circle relative lg:ml-[4%] py-24">
+        {/* месеци по вертикалната ос — средните се скриват зад кръга */}
+        <div className="absolute inset-0 z-0">
+          {months.map((m, i) => (
+            <div
+              key={m}
+              className="absolute left-1/2"
               style={{
-                left: `${50 + 40 * Math.cos(angle)}%`,
-                top: `${50 + 40 * Math.sin(angle)}%`,
+                top: `${(i / Math.max(months.length - 1, 1)) * 100}%`,
                 transform: 'translate(-50%, -50%)',
               }}
             >
               <span className="pc-month flex flex-col items-center">
-                <span className="text-sm lg:text-base font-bold text-white" style={{ textShadow: '0 2px 4px rgba(0,0,0,0.5)' }}>{m}</span>
-                <span className="text-[8px] lg:text-[9px] uppercase tracking-wider font-medium text-white/90" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.4)' }}>месец</span>
+                <span className="text-base lg:text-lg font-bold text-[#1A1A1A] leading-none">{m}</span>
+                <span className="text-[10px] font-medium text-[#1A1A1A]/60 mt-0.5">месец</span>
               </span>
             </div>
-          )
-        })}
+          ))}
+        </div>
+
+        {/* Плосък червен диск */}
+        <div className="pc-disc relative z-10 rounded-full bg-[#DC2626] flex items-center justify-center w-[280px] h-[280px] md:w-[340px] md:h-[340px] lg:w-[380px] lg:h-[380px]">
+          <span className="pc-period text-white text-4xl md:text-5xl lg:text-6xl font-bold">{period}</span>
+        </div>
       </div>
 
-      {/* Статистики — подреден ред под кръга, еднакво на всички екрани */}
+      {/* Статистики — desktop: swoosh комети от десния ръб на екрана */}
       {stats.length > 0 && (
-        <div className="mt-10 flex flex-wrap justify-center gap-x-8 gap-y-4 max-w-md">
-          {stats.map(s => (
-            <div key={s.label} className="pc-stat flex items-center gap-2">
-              <svg width="24" height="18" viewBox="0 0 24 18" className="overflow-visible shrink-0">
-                <line x1="0" y1="9" x2="20" y2="9" stroke="#E5E5E5" strokeWidth="1" />
-                <circle cx="20" cy="9" r="3" fill="#DC2626" />
+        <div className="hidden lg:flex flex-col justify-center gap-7 absolute right-0 top-1/2 -translate-y-1/2 w-[48%] z-20">
+          {stats.map((s, i) => (
+            <div key={s.label} className="relative flex items-center justify-end" style={{ paddingRight: offsets[i % offsets.length] }}>
+              <svg
+                className="pc-swoosh absolute h-16 pointer-events-none"
+                style={{ top: '50%', marginTop: '-32px', left: `calc(100% - ${offsets[i % offsets.length]}px - 10px)`, width: '42vw' }}
+                viewBox="0 0 400 64"
+                preserveAspectRatio="none"
+                fill="none"
+              >
+                <path d="M0,32 C 120,24 250,8 400,0 L400,64 C 250,56 120,40 0,32 Z" fill="#F2F2F2" />
               </svg>
-              <div className="text-left">
-                <div className="text-lg lg:text-xl font-extralight text-[#1A1A1A] leading-none">{s.value}</div>
-                <div className="text-[10px] font-medium text-[#1A1A1A]/60 mt-0.5">{s.label}</div>
+              <div className="pc-stat-val relative z-10 text-right">
+                <div className="flex items-center justify-end gap-2">
+                  <span className="text-[clamp(30px,3vw,52px)] font-extralight text-[#1A1A1A] leading-none tracking-tight">{s.value}</span>
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#DC2626] shrink-0" />
+                </div>
+                <div className="text-xs font-medium text-[#1A1A1A]/60 mt-1.5 mr-4">{s.label}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Статистики — мобилно: подреден ред под кръга */}
+      {stats.length > 0 && (
+        <div className="lg:hidden mt-6 flex flex-wrap justify-center gap-x-8 gap-y-4 max-w-md">
+          {stats.map(s => (
+            <div key={s.label} className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#DC2626] shrink-0" />
+              <div>
+                <span className="text-lg font-extralight text-[#1A1A1A] leading-none">{s.value}</span>
+                <span className="text-[10px] font-medium text-[#1A1A1A]/60 ml-1.5">{s.label}</span>
               </div>
             </div>
           ))}
@@ -353,10 +351,8 @@ export default function Services() {
                       <div className="ph-anim grid grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
                         {phase.services.map((svc) => (
                           <div key={svc.name} className="flex flex-col items-start group">
-                            <div className="w-12 h-12 rounded-xl bg-[#F5F5F5] group-hover:bg-[#DC2626]/10 flex items-center justify-center mb-2 transition-colors duration-300">
-                              <img src={svc.icon} alt={svc.name} className="w-6 h-6 object-contain" />
-                            </div>
-                            <span className="text-xs lg:text-sm font-semibold text-[#1A1A1A] leading-tight">{svc.name}</span>
+                            <img src={svc.icon} alt={svc.name} className="w-9 h-9 object-contain mb-3 group-hover:scale-110 transition-transform duration-300" />
+                            <span className="text-xs lg:text-sm font-bold text-[#1A1A1A] leading-tight">{svc.name}</span>
                           </div>
                         ))}
                       </div>
