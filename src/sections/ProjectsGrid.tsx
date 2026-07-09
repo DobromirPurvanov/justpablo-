@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { drift, imageParallax } from '../lib/motion'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -67,22 +68,30 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
   useEffect(() => {
     if (!cardRef.current) return
-    gsap.from(cardRef.current, {
-      scrollTrigger: { trigger: cardRef.current, start: 'top 90%' },
-      y: 50, opacity: 0, duration: 0.8,
-      delay: index * 0.08, ease: 'power2.out',
-    })
+    const card = cardRef.current
+    const ctx = gsap.context(() => {
+      gsap.from(card, {
+        scrollTrigger: { trigger: card, start: 'top 88%', once: true },
+        y: 36, opacity: 0, duration: 0.8, ease: 'power3.out', clearProps: 'transform',
+      })
+      const frame = card.querySelector('.pc-frame')
+      const wrap = card.querySelector('.pc-imgwrap')
+      if (frame && wrap) imageParallax(wrap, frame)
+    }, card)
+    return () => ctx.revert()
   }, [index])
 
   return (
     <div ref={cardRef} className="group cursor-pointer relative">
       {/* Image */}
-      <div className="relative overflow-hidden bg-[#F5F5F5] rounded-lg shadow-sm group-hover:shadow-xl transition-shadow duration-500">
-        <img
-          src={project.image}
-          alt={project.name}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-        />
+      <div className="pc-frame relative overflow-hidden bg-[#F5F5F5] rounded-lg shadow-sm group-hover:shadow-xl transition-shadow duration-500 aspect-[4/3]">
+        <div className="pc-imgwrap absolute inset-0 scale-[1.15] will-change-transform">
+          <img
+            src={project.image}
+            alt={project.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+          />
+        </div>
         {/* Overlay gradient on hover */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#1A1A1A]/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
         {/* Vertical year text on left */}
@@ -127,72 +136,23 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
 
 export default function ProjectsGrid() {
   const sectionRef = useRef<HTMLDivElement>(null)
-  const titleRef = useRef<HTMLDivElement>(null)
-  const colLeftRef = useRef<HTMLDivElement>(null)
-  const colRightRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    const el = sectionRef.current
+    if (!el) return
     const ctx = gsap.context(() => {
-      // Big "ПРОЕКТИ" scattered text parallax
-      gsap.fromTo(titleRef.current,
-        { y: 100 },
-        {
-          y: -100,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top bottom',
-            end: 'bottom top',
-            scrub: 1,
-          },
-        }
-      )
-
-      // Left column parallax - moves slower
-      if (colLeftRef.current) {
-        gsap.fromTo(colLeftRef.current,
-          { y: 80 },
-          {
-            y: -80,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: 1.5,
-            },
-          }
-        )
-      }
-
-      // Right column parallax - moves faster (counter direction)
-      if (colRightRef.current) {
-        gsap.fromTo(colRightRef.current,
-          { y: -40 },
-          {
-            y: 40,
-            ease: 'none',
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: 1.2,
-            },
-          }
-        )
-      }
-    }, sectionRef)
+      drift('.pg-bgtext', el, { from: 60, to: -60 })
+      drift('.pg-col-left', el, { from: 40, to: -40, scrub: 1.2 })
+      drift('.pg-col-right', el, { from: -30, to: 30, scrub: 1.2 })
+    }, el)
     return () => ctx.revert()
   }, [])
 
   return (
     <section ref={sectionRef} className="bg-white py-16 lg:py-24 relative overflow-hidden">
       {/* Giant "ПРОЕКТИ" background text with parallax */}
-      <div
-        ref={titleRef}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none z-0"
-      >
-        <span className="font-ultra-thin text-[clamp(100px,20vw,280px)] text-[#1A1A1A]/[0.04] tracking-[0.3em] whitespace-nowrap">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none z-0">
+        <span className="pg-bgtext block font-ultra-thin text-[clamp(100px,20vw,280px)] text-[#1A1A1A]/[0.04] tracking-[0.3em] whitespace-nowrap">
           ПРОЕКТИ
         </span>
       </div>
@@ -207,7 +167,7 @@ export default function ProjectsGrid() {
           {/* Asymmetric grid matching almero */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
             {/* Left column - 2 stacked */}
-            <div ref={colLeftRef} className="lg:col-span-5 flex flex-col gap-6 lg:gap-8">
+            <div className="pg-col-left lg:col-span-5 flex flex-col gap-6 lg:gap-8">
               <ProjectCard project={projects[0]} index={0} />
               <ProjectCard project={projects[4]} index={4} />
             </div>
@@ -216,7 +176,7 @@ export default function ProjectsGrid() {
             <div className="hidden lg:block lg:col-span-1" />
 
             {/* Right column - 2 stacked with offset */}
-            <div ref={colRightRef} className="lg:col-span-6 flex flex-col gap-6 lg:gap-8 lg:mt-24">
+            <div className="pg-col-right lg:col-span-6 flex flex-col gap-6 lg:gap-8 lg:mt-24">
               <ProjectCard project={projects[1]} index={1} />
               <ProjectCard project={projects[3]} index={3} />
             </div>

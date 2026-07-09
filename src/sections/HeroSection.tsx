@@ -19,6 +19,9 @@ export default function HeroSection() {
         y: 60, opacity: 0, duration: 1.2, stagger: 0.15, ease: 'power3.out',
       })
     }
+    tl.from('.hero-sub', {
+      y: 24, opacity: 0, duration: 0.8, ease: 'power3.out',
+    }, '-=0.7')
     tl.from(circleRef.current, {
       scale: 0, opacity: 0, duration: 0.8, ease: 'back.out(1.7)',
     }, '-=0.6')
@@ -26,35 +29,16 @@ export default function HeroSection() {
     return () => { tl.kill() }
   }, [])
 
-  // Parallax effect on scroll
+  // Паралакс при излизане от hero-то — дълбочина без да пипа entrance-а
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Title moves up slower than scroll (parallax)
-      gsap.to(titleRef.current, {
-        y: -150,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 1,
-        },
-      })
-
-      // Circle moves up faster (counter-parallax)
-      gsap.to(circleRef.current, {
-        y: 80,
-        rotation: 45,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 1,
-        },
+      const mm = gsap.matchMedia()
+      mm.add('(min-width: 768px) and (prefers-reduced-motion: no-preference)', () => {
+        const st = { trigger: sectionRef.current, start: 'top top', end: 'bottom top', scrub: 1 }
+        gsap.to(titleRef.current, { y: -90, ease: 'none', scrollTrigger: st })
+        gsap.to(circleRef.current, { y: 70, ease: 'none', scrollTrigger: st })
       })
     }, sectionRef)
-
     return () => ctx.revert()
   }, [])
 
@@ -89,7 +73,7 @@ export default function HeroSection() {
           </h1>
 
           {/* Subtitle */}
-          <p className="mt-8 text-base lg:text-lg font-light text-[#1A1A1A]/40 max-w-md leading-relaxed pr-16 md:pr-0">
+          <p className="hero-sub mt-8 text-base lg:text-lg font-light text-[#1A1A1A]/40 max-w-md leading-relaxed pr-16 md:pr-0">
             JustPablo помага на бизнеса да растете онлайн с ясна стратегия и измерими резултати.
           </p>
 

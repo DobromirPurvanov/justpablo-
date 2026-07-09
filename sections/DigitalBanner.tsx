@@ -1,6 +1,9 @@
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { reveal } from '../lib/motion'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const clientResults = [
   {
@@ -30,44 +33,81 @@ const clientResults = [
   },
 ]
 
+/**
+ * Almero-стил секция: на desktop се закача (pin) и резултатите
+ * се движат хоризонтално, докато потребителят скролва вертикално.
+ * На мобилно остава нормална решетка.
+ */
 export default function DigitalBanner() {
   const sectionRef = useRef<HTMLDivElement>(null)
+  const trackRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const el = sectionRef.current
     if (!el) return
     const ctx = gsap.context(() => {
-      // Голямото "digital" — леко плъзгане отляво, веднъж
       gsap.from('.db-digital', {
         x: -60, opacity: 0, duration: 1.1, ease: 'power3.out', clearProps: 'transform',
         scrollTrigger: { trigger: el, start: 'top 80%', once: true },
       })
-      // Резултатите — подреден stagger, всички в една равнина
-      reveal('.result-card', el, { y: 32, stagger: 0.08, delay: 0.2, start: 'top 75%' })
+
+      const mm = gsap.matchMedia()
+
+      // Desktop: pin + хоризонтален скрол
+      mm.add('(min-width: 1024px) and (prefers-reduced-motion: no-preference)', () => {
+        const track = trackRef.current
+        if (!track) return
+        const distance = () => track.scrollWidth - (track.parentElement?.clientWidth ?? 0)
+        gsap.to(track, {
+          x: () => -distance(),
+          ease: 'none',
+          scrollTrigger: {
+            trigger: el,
+            start: 'top top',
+            end: () => '+=' + distance(),
+            scrub: 1,
+            pin: true,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+          },
+        })
+      })
+
+      // Мобилно / reduced-motion: обикновен stagger
+      mm.add('(max-width: 1023px), (prefers-reduced-motion: reduce)', () => {
+        reveal('.result-card', el, { y: 32, stagger: 0.08, start: 'top 80%' })
+      })
     }, el)
     return () => ctx.revert()
   }, [])
 
   return (
-    <section ref={sectionRef} className="bg-white py-20 lg:py-32 overflow-hidden">
-      <div className="section-padding">
-        <div className="container-max">
-          <div className="mb-16 lg:mb-24">
-            <span className="db-digital block font-ultra-thin text-[clamp(80px,18vw,280px)] text-[#1A1A1A] leading-none tracking-tight">
-              digital
-            </span>
+    <section ref={sectionRef} className="bg-white overflow-hidden">
+      <div className="py-20 lg:py-0 lg:h-screen lg:flex lg:flex-col lg:justify-center">
+        <div className="section-padding">
+          <div className="container-max">
+            <div className="mb-12 lg:mb-16">
+              <span className="db-digital block font-ultra-thin text-[clamp(80px,15vw,220px)] text-[#1A1A1A] leading-none tracking-tight">
+                digital
+              </span>
+            </div>
           </div>
+        </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-x-6 gap-y-10">
+        <div className="lg:overflow-hidden">
+          <div
+            ref={trackRef}
+            className="section-padding grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-10 lg:flex lg:flex-nowrap lg:w-max lg:items-stretch lg:gap-16"
+          >
             {clientResults.map((client) => (
-              <div key={client.domain} className="result-card group cursor-pointer border-t border-[#1A1A1A]/10 pt-5">
-                <div className="text-[clamp(36px,5vw,64px)] font-extralight text-[#DC2626] leading-none mb-3 group-hover:scale-105 origin-left transition-transform duration-300">
+              <div key={client.domain} className="result-card group cursor-pointer border-t border-[#1A1A1A]/10 pt-5 lg:w-[400px] lg:shrink-0">
+                <div className="text-[clamp(36px,5vw,72px)] font-extralight text-[#DC2626] leading-none mb-4 group-hover:scale-105 origin-left transition-transform duration-300">
                   {client.result}
                 </div>
-                <div className="text-xs font-semibold text-[#1A1A1A] mb-2 group-hover:text-[#DC2626] transition-colors duration-300">
+                <div className="text-sm font-semibold text-[#1A1A1A] mb-2 group-hover:text-[#DC2626] transition-colors duration-300">
                   {client.domain}
                 </div>
-                <p className="text-xs font-light text-[#1A1A1A]/60 leading-relaxed">
+                <p className="text-sm font-light text-[#1A1A1A]/60 leading-relaxed">
                   {client.text}
                 </p>
               </div>

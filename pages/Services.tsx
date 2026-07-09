@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import { Link } from 'react-router'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { reveal } from '../lib/motion'
+import { drift, reveal } from '../lib/motion'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -113,6 +113,8 @@ function PhaseCircle({ months, period, stats }: {
     const ctx = gsap.context(() => {
       const st = { trigger: el, start: 'top 80%', once: true as const }
       gsap.from('.pc-disc', { scale: 0.92, opacity: 0, duration: 0.9, ease: 'power3.out', scrollTrigger: st })
+      const circle = el.querySelector('.pc-circle')
+      if (circle) drift(circle, el, { from: 24, to: -24, scrub: 1.2 })
       gsap.from('.pc-period', { scale: 0.8, opacity: 0, duration: 0.7, delay: 0.2, ease: 'back.out(1.6)', scrollTrigger: st })
       gsap.from('.pc-month', { opacity: 0, scale: 0.5, duration: 0.45, stagger: 0.05, delay: 0.3, ease: 'power2.out', scrollTrigger: st })
       gsap.from('.pc-stat', { y: 14, opacity: 0, duration: 0.6, stagger: 0.07, delay: 0.45, ease: 'power3.out', clearProps: 'transform', scrollTrigger: st })
@@ -128,7 +130,7 @@ function PhaseCircle({ months, period, stats }: {
 
   return (
     <div ref={wrapRef} className="flex flex-col items-center">
-      <div className={`relative ${sizeClasses}`}>
+      <div className={`pc-circle relative ${sizeClasses}`}>
         <div className="pc-disc absolute inset-0">
           {/* Диск с градиент */}
           <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#DC2626] to-[#B91C1C] shadow-xl shadow-[#DC2626]/20" />
@@ -220,6 +222,25 @@ export default function Services() {
       // Цитат + CTA
       const quote = el.querySelector('.svc-quote')
       if (quote) reveal(quote.querySelectorAll('.q-item'), quote, { stagger: 0.15 })
+
+      // Фонови петна — бавен дрифт за дълбочина
+      gsap.utils.toArray<HTMLElement>('.svc-blob').forEach(blob => {
+        const sec = blob.closest('section')
+        if (sec) drift(blob, sec, { from: 40, to: -40, scrub: 1.5 })
+      })
+
+      // CTA пръстенът се върти от скрола (almero стил)
+      const mm = gsap.matchMedia()
+      mm.add('(prefers-reduced-motion: no-preference)', () => {
+        const ring = el.querySelector('.svc-cta-ring')
+        const ringSec = ring?.closest('section')
+        if (ring && ringSec) {
+          gsap.to(ring, {
+            rotation: 160, ease: 'none',
+            scrollTrigger: { trigger: ringSec, start: 'top bottom', end: 'bottom top', scrub: 1 },
+          })
+        }
+      })
     }, el)
     return () => ctx.revert()
   }, [])
@@ -228,7 +249,7 @@ export default function Services() {
     <div ref={pageRef} className="pt-20 overflow-hidden">
       {/* Hero */}
       <section className="svc-hero relative bg-white py-20 lg:py-32 overflow-hidden">
-        <div className="absolute top-[20%] right-[-10%] w-[300px] h-[300px] lg:w-[500px] lg:h-[500px] rounded-full bg-[#DC2626]/[0.03] blur-3xl pointer-events-none" />
+        <div className="svc-blob absolute top-[20%] right-[-10%] w-[300px] h-[300px] lg:w-[500px] lg:h-[500px] rounded-full bg-[#DC2626]/[0.03] blur-3xl pointer-events-none" />
         <div className="section-padding relative z-10">
           <div className="container-max">
             <div className="svc-hero-title max-w-3xl">
@@ -291,7 +312,7 @@ export default function Services() {
 
       {/* Цитат + CTA */}
       <section className="svc-quote relative bg-white py-20 lg:py-32 overflow-hidden">
-        <div className="absolute top-[20%] left-[-10%] w-[300px] h-[300px] rounded-full bg-[#DC2626]/[0.03] blur-3xl pointer-events-none" />
+        <div className="svc-blob absolute top-[20%] left-[-10%] w-[300px] h-[300px] rounded-full bg-[#DC2626]/[0.03] blur-3xl pointer-events-none" />
         <div className="section-padding relative z-10">
           <div className="container-max">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -301,8 +322,8 @@ export default function Services() {
                 </p>
               </div>
               <div className="q-item lg:col-span-4 flex justify-center lg:justify-end">
-                <Link to="/zapitvane" className="group relative w-32 h-32 md:w-40 md:h-40 lg:w-44 lg:h-44 flex items-center justify-center">
-                  <svg viewBox="0 0 180 180" className="absolute inset-0 w-full h-full animate-spin-slow">
+                <Link to="/zapitvane" data-cursor="Запитване" className="group relative w-32 h-32 md:h-40 md:w-40 lg:w-44 lg:h-44 flex items-center justify-center">
+                  <svg viewBox="0 0 180 180" className="svc-cta-ring absolute inset-0 w-full h-full">
                     <defs>
                       <path id="ctaCircleSvc" d="M 90, 90 m -70, 0 a 70,70 0 1,1 140,0 a 70,70 0 1,1 -140,0" />
                     </defs>

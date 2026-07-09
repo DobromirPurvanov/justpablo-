@@ -147,3 +147,15 @@
 @media (prefers-reduced-motion: reduce) {
   .marquee-track-left, .marquee-track-right { animation: none; }
 }
+
+/* === Концентрични пръстени с услуги (almero стил) === */
+@keyframes spin-rev {
+  from { transform: rotate(360deg); }
+  to { transform: rotate(0deg); }
+}
+.ring-a { animation: spin 55s linear infinite; }
+.ring-b { animation: spin-rev 45s linear infinite; }
+.ring-c { animation: spin 38s linear infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .ring-a, .ring-b, .ring-c { animation: none; }
+}
