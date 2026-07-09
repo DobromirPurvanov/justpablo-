@@ -17,6 +17,34 @@ const questions = [
 const categories = ['Бизнес', 'Цели', 'Ресурси', 'Изпращане']
 const catOf = (i: number) => (i <= 1 ? 0 : i <= 3 ? 1 : i <= 5 ? 2 : 3)
 
+/* Леки line-art скици по категория — запълват кръга (almero стил) */
+function CategoryGlyph({ cat }: { cat: number }) {
+  const common = { fill: 'none', strokeWidth: 1.6, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const }
+  return (
+    <svg width="84" height="84" viewBox="0 0 64 64" className="mb-8" aria-hidden="true">
+      {cat === 0 && (<g>
+        <path d="M12 26 L12 50 L52 50 L52 26" stroke="#1A1A1A" opacity="0.14" {...common} />
+        <path d="M8 26 L14 14 L50 14 L56 26 Q52 32 46 26 Q42 32 36 26 Q32 32 26 26 Q22 32 16 26 Q12 32 8 26 Z" stroke="#1A1A1A" opacity="0.14" {...common} />
+        <path d="M26 50 L26 38 L38 38 L38 50" stroke="#DC2626" opacity="0.45" {...common} />
+      </g>)}
+      {cat === 1 && (<g>
+        <circle cx="32" cy="32" r="20" stroke="#1A1A1A" opacity="0.14" {...common} />
+        <circle cx="32" cy="32" r="11" stroke="#1A1A1A" opacity="0.14" {...common} />
+        <path d="M32 32 L52 12 M52 12 L44 13 M52 12 L51 20" stroke="#DC2626" opacity="0.45" {...common} />
+      </g>)}
+      {cat === 2 && (<g>
+        <ellipse cx="32" cy="20" rx="17" ry="6" stroke="#1A1A1A" opacity="0.14" {...common} />
+        <path d="M15 20 V32 C15 35.3 22.6 38 32 38 C41.4 38 49 35.3 49 32 V20" stroke="#1A1A1A" opacity="0.14" {...common} />
+        <path d="M15 32 V44 C15 47.3 22.6 50 32 50 C41.4 50 49 47.3 49 44 V32" stroke="#DC2626" opacity="0.4" {...common} />
+      </g>)}
+      {cat === 3 && (<g>
+        <path d="M8 30 L56 12 L40 54 L30 38 Z" stroke="#1A1A1A" opacity="0.14" {...common} />
+        <path d="M30 38 L56 12" stroke="#DC2626" opacity="0.45" {...common} />
+      </g>)}
+    </svg>
+  )
+}
+
 const isAnswered = (data: Record<string, unknown>, id: string) => {
   const v = data[id]
   return Array.isArray(v) ? v.length > 0 : Boolean(v && String(v).trim())
@@ -164,6 +192,11 @@ export default function ScrollWizard() {
               </div>
               <div className="lg:col-span-7 flex justify-center">
                 <div className="relative w-[300px] h-[300px] md:w-[440px] md:h-[440px] lg:w-[560px] lg:h-[560px] rounded-full border border-[#1A1A1A]/10 flex flex-col items-center justify-center gap-8">
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" aria-hidden="true">
+                    <g transform="rotate(35 50 50)">
+                      <circle cx="50" cy="50" r="49.6" fill="none" stroke="#DC2626" strokeWidth="0.9" strokeLinecap="round" pathLength="100" strokeDasharray="10 90" />
+                    </g>
+                  </svg>
                   {['Съществуващ бранд', 'Стартиращ бранд'].map(opt => (
                     <button key={opt} onClick={() => startWizard(opt)} className="group flex items-center gap-3">
                       <span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
@@ -225,18 +258,25 @@ export default function ScrollWizard() {
             {/* Кръгът — сцената за отговора (desktop) */}
             <div className="lg:col-span-6 hidden lg:flex justify-center xl:justify-end">
               <div className="relative w-[min(52vw,740px)] aspect-square shrink-0">
-                {/* Тънката окръжност + червената дъга при СЛЕДВАЩ */}
+                {/* Кръгът се пълни с напредъка */}
                 <div className="absolute inset-0 rounded-full border border-[#1A1A1A]/10" />
-                <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100">
-                  <g transform="rotate(28 50 50)">
-                    <circle cx="50" cy="50" r="49.6" fill="none" stroke="#DC2626" strokeWidth="0.8" pathLength="100" strokeDasharray="13 87" />
-                  </g>
+                <svg className="absolute inset-0 w-full h-full pointer-events-none -rotate-90" viewBox="0 0 100 100">
+                  <circle
+                    cx="50" cy="50" r="49.6" fill="none"
+                    stroke="#DC2626" strokeWidth="0.9" strokeLinecap="round"
+                    pathLength="100"
+                    style={{
+                      strokeDasharray: `${((current + 1) / questions.length) * 100} ${100 - ((current + 1) / questions.length) * 100}`,
+                      transition: 'stroke-dasharray 0.7s cubic-bezier(0.4, 0, 0.2, 1)',
+                    }}
+                  />
                 </svg>
 
                 {/* Съдържание в кръга */}
                 <div className="wz-anim absolute inset-0 flex flex-col items-center justify-center px-[12%]">
+                  <CategoryGlyph cat={catOf(current)} />
                   {q.subtitle && (
-                    <p className="text-[15px] lg:text-base font-light text-[#1A1A1A]/70 leading-relaxed text-center mb-12 max-w-sm">{q.subtitle}</p>
+                    <p className="text-[15px] lg:text-base font-light text-[#1A1A1A]/70 leading-relaxed text-center mb-10 max-w-sm">{q.subtitle}</p>
                   )}
                   {answerArea}
                 </div>

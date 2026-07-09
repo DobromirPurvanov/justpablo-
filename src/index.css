@@ -170,3 +170,10 @@ body {
   touch-action: manipulation;
   -webkit-tap-highlight-color: transparent;
 }
+
+/* Полетата имат собствен фокус индикатор (червената линия) — без глобалния ring */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+}
