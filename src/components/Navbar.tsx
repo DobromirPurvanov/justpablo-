@@ -4,6 +4,7 @@ import gsap from 'gsap'
 
 const navLinks = [
   { path: '/', label: 'Начало' },
+  { path: '/za-nas', label: 'За нас' },
   { path: '/uslugi', label: 'Услуги' },
   { path: '/analiz', label: 'Анализ' },
   { path: '/rezultati', label: 'Резултати' },

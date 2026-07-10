@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from 'react-router'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Home from './pages/Home'
+import AboutPage from './pages/AboutPage'
 import Services from './pages/Services'
 import Results from './pages/Results'
 import Strategy from './pages/Strategy'
@@ -72,6 +73,7 @@ function AnimatedRoutes() {
       </div>
       <Routes location={displayLoc}>
         <Route path="/" element={<Home />} />
+        <Route path="/za-nas" element={<AboutPage />} />
         <Route path="/uslugi" element={<Services />} />
         <Route path="/rezultati" element={<Results />} />
         <Route path="/strategiya" element={<Strategy />} />
