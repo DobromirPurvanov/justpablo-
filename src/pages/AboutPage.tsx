@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { Check } from 'lucide-react'
-import { countUp, maskReveal, reveal, wordsReveal } from '../lib/motion'
+import { maskReveal, reveal, wordsReveal } from '../lib/motion'
 import StatsBand from '../components/StatsBand'
 import MagneticCta from '../components/MagneticCta'
 import NextPage from '../components/NextPage'
@@ -36,7 +36,6 @@ const results = [
 ]
 
 const coverage = [
-  { group: '13–17', pablo: '18 500', bg: '97 000', pct: '19%' },
   { group: '18–24', pablo: '130 000', bg: '410 000', pct: '31%', hot: true },
   { group: '25–34', pablo: '78 000', bg: '390 000', pct: '20%' },
   { group: '35–44', pablo: '18 500', bg: '212 000', pct: '11%' },
@@ -79,9 +78,6 @@ export default function AboutPage() {
           y: 20, opacity: 0, duration: 0.6, stagger: 0.06, ease: 'power3.out', clearProps: 'transform',
         })
       })
-
-      const merch = el.querySelector('.ab-merch-num')
-      if (merch) countUp(merch, { trigger: merch, duration: 1.2 })
 
       const gender = el.querySelector('.ab-gender-fill')
       if (gender) {
@@ -231,30 +227,6 @@ export default function AboutPage() {
                       {c}
                     </span>
                   ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── MERCHANDISE ─── */}
-      <section className="bg-[#1A1A1A] py-16 lg:py-24">
-        <div className="section-padding">
-          <div className="container-max">
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-              <div className="lg:col-span-7">
-                <h2 className="ab-h2 font-thin-display text-3xl lg:text-5xl text-white leading-tight mb-6">
-                  Собствено производство
-                </h2>
-                <p className="text-base lg:text-lg font-light text-white/70 leading-relaxed max-w-xl">
-                  Разполагаме със собствена фабрика за производство на трикотаж, което ни позволява да изработваме всякакъв тип <strong className="text-white">merchandise от високо качество</strong> — от идеята и дизайна до готовия продукт за кампаниите на вашия бранд.
-                </p>
-              </div>
-              <div className="lg:col-span-5 flex lg:justify-end">
-                <div className="text-left lg:text-right">
-                  <div className="ab-merch-num text-[clamp(64px,9vw,140px)] font-extralight text-[#DC2626] leading-none tracking-tight">50+</div>
-                  <div className="text-sm font-light text-white/60 mt-2">души в производството</div>
                 </div>
               </div>
             </div>

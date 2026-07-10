@@ -338,7 +338,7 @@ export default function Results() {
         </div>
       </section>
 
-      <NextPage to="/strategiya" label="Стратегия" />
+      <NextPage to="/ceni" label="Цени" />
     </div>
   )
 }
