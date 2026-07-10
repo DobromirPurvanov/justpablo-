@@ -18,7 +18,20 @@ const navLinks = [
  */
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [hidden, setHidden] = useState(false)
+  const lastScrollY = useRef(0)
   const location = useLocation()
+
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY
+      if (y > lastScrollY.current && y > 160) setHidden(true)
+      else setHidden(false)
+      lastScrollY.current = y
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
   const overlayRef = useRef<HTMLDivElement>(null)
   const firstRender = useRef(true)
 
@@ -63,7 +76,7 @@ export default function Navbar() {
   return (
     <>
       {/* Лого — горе вляво */}
-      <Link to="/" className="fixed top-5 left-5 lg:left-8 z-50 flex items-center gap-3" onClick={() => setMenuOpen(false)}>
+      <Link to="/" className={`fixed top-5 left-5 lg:left-8 z-50 flex items-center gap-3 transition-all duration-500 ${hidden && !menuOpen ? '-translate-y-24 opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'}`} onClick={() => setMenuOpen(false)}>
         <img src="/images/logo-mark.png" alt="Just Pablo Digital" className="w-10 h-10 lg:w-11 lg:h-11 object-contain" />
         <span className="flex flex-col leading-none">
           <span className="text-lg font-semibold tracking-tight text-[#1A1A1A]">Just Pablo</span>
@@ -72,7 +85,7 @@ export default function Navbar() {
       </Link>
 
       {/* Горе вдясно: CTA (desktop) + бургер */}
-      <div className="fixed top-5 right-5 lg:right-8 z-50 flex items-center gap-3">
+      <div className={`fixed top-5 right-5 lg:right-8 z-50 flex items-center gap-3 transition-all duration-500 ${hidden && !menuOpen ? '-translate-y-24 opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'}`}>
         <Link
           to="/zapitvane"
           className={`hidden lg:inline-flex items-center bg-[#DC2626] text-white text-[11px] uppercase tracking-[0.14em] font-medium px-5 py-3 rounded-full shadow-lg shadow-[#DC2626]/20 hover:bg-[#B91C1C] hover:scale-[1.03] transition-all duration-300 ${
