@@ -55,7 +55,7 @@ export default function HeroSection() {
       <div className="absolute bottom-[10%] left-[5%] w-[200px] h-[200px] lg:w-[350px] lg:h-[350px] rounded-full bg-[#DC2626]/[0.03] blur-3xl pointer-events-none" />
       
       {/* Интерактивно лого — очите следват мишката */}
-      <div className="hidden md:block absolute right-[5%] lg:right-[7%] top-[56%] -translate-y-1/2 w-[clamp(200px,24vw,360px)] z-[5]">
+      <div className="hidden md:block absolute right-[3%] lg:right-[5%] top-[56%] -translate-y-1/2 w-[clamp(280px,34vw,540px)] z-[5]">
         <div className="face-inner">
           <LogoFace />
         </div>
