@@ -1,73 +1,33 @@
-# React + TypeScript + Vite
+# Justpablo — уебсайт
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Пълният сайт на [justpablo.bg](https://justpablo.bg) — дигитален маркетинг и бизнес развитие.
 
-Currently, two official plugins are available:
+## Стек
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- [Vite](https://vite.dev) + [React 19](https://react.dev) + TypeScript
+- [Tailwind CSS 3](https://tailwindcss.com) + [shadcn/ui](https://ui.shadcn.com) (само използваните компоненти в `src/components/ui`)
+- [GSAP](https://gsap.com) + ScrollTrigger — скрол анимации
+- [Lenis](https://lenis.darkroom.engineering) — плавен скрол
+- [React Router 7](https://reactrouter.com) (`HashRouter`)
 
-## React Compiler
+## Команди
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install      # инсталиране на зависимостите
+npm run dev      # dev сървър на http://localhost:3000
+npm run build    # production build в dist/ (tsc + vite)
+npm run lint     # ESLint
+npm run preview  # преглед на production build-а
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Структура
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```
+src/
+  pages/       # страници (route-ове в App.tsx)
+  sections/    # секции от началната страница
+  components/  # навигация, футър, анимации, форми
+  components/ui/  # shadcn/ui примитиви
+  lib/         # утилити (cn, валута, motion помощници)
+public/        # статични активи (икони, изображения)
 ```
