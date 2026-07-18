@@ -50,7 +50,7 @@ export default function Footer() {
                 <a href="mailto:info@justpablo.bg" className="text-[#DC2626] hover:text-white transition-colors">
                   info@justpablo.bg
                 </a>
-                <a href="#" className="text-[#DC2626] hover:text-white transition-colors">
+                <a href="https://m.me/justpablo" target="_blank" rel="noopener noreferrer" className="text-[#DC2626] hover:text-white transition-colors">
                   Messenger
                 </a>
               </div>
@@ -59,7 +59,12 @@ export default function Footer() {
                 <div className="text-[11px] uppercase tracking-[0.15em] font-light text-white/50 mb-3">
                   Варна
                 </div>
-                <a href="#" className="text-sm font-light text-white/70 hover:text-[#DC2626] transition-colors block">
+                <a
+                  href="https://www.google.com/maps/search/?api=1&query=Варна+ул.+Мария+Луиза+47"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-light text-white/70 hover:text-[#DC2626] transition-colors block"
+                >
                   ул. Мария Луиза 47
                 </a>
                 <a href="tel:0887654321" className="text-sm font-light text-white/70 hover:text-[#DC2626] transition-colors block mt-1">
@@ -74,8 +79,12 @@ export default function Footer() {
               <Link to="/rezultati" className="group flex items-center gap-4 mb-12">
                 <div className="w-24 h-24 lg:w-32 lg:h-32 rounded-full bg-[#F5F5F5] overflow-hidden flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
                   <img
-                    src="./images/case-ecommerce.jpg"
-                    alt="Results"
+                    src="/images/case-ecommerce.jpg"
+                    alt="Резултати и казуси на клиенти"
+                    width="128"
+                    height="128"
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
                   />
                 </div>
@@ -115,14 +124,20 @@ export default function Footer() {
             <p className="text-[10px] uppercase tracking-[0.15em] font-light text-white/60">
               © JustPablo — всички права запазени.
             </p>
-            <div className="flex items-center gap-4 md:gap-6">
-              <Link to="/biskvitki" className="text-[10px] uppercase tracking-[0.15em] font-light text-white/60 hover:text-white/60 transition-colors">
+            <div className="flex flex-wrap items-center gap-4 md:gap-6">
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent('open-cookie-settings'))}
+                className="text-[10px] uppercase tracking-[0.15em] font-light text-white/60 hover:text-white transition-colors"
+              >
+                Настройки за бисквитки
+              </button>
+              <Link to="/biskvitki" className="text-[10px] uppercase tracking-[0.15em] font-light text-white/60 hover:text-white transition-colors">
                 Бисквитки
               </Link>
-              <Link to="/poveritelnost" className="text-[10px] uppercase tracking-[0.15em] font-light text-white/60 hover:text-white/60 transition-colors">
+              <Link to="/poveritelnost" className="text-[10px] uppercase tracking-[0.15em] font-light text-white/60 hover:text-white transition-colors">
                 Поверителност
               </Link>
-              <Link to="/usloviya" className="text-[10px] uppercase tracking-[0.15em] font-light text-white/60 hover:text-white/60 transition-colors">
+              <Link to="/usloviya" className="text-[10px] uppercase tracking-[0.15em] font-light text-white/60 hover:text-white transition-colors">
                 Условия за ползване
               </Link>
             </div>

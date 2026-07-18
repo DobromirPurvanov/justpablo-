@@ -26,17 +26,31 @@ function saveConsent(c: CookieConsent) {
 }
 
 export default function CookieBanner() {
-  const [visible, setVisible] = useState(false)
+  // Показваме банера само ако още няма записано съгласие (изчислено веднъж).
+  const [visible, setVisible] = useState(() => !getConsent())
   const [settingsOpen, setSettingsOpen] = useState(false)
   const [analytics, setAnalytics] = useState(false)
   const [functional, setFunctional] = useState(false)
 
+  // Отваряне на настройките отвън (напр. линк във футъра), с презареждане
+  // на записания избор в toggle-ите.
   useEffect(() => {
-    const consent = getConsent()
-    if (!consent) {
-      setVisible(true)
+    const onOpen = () => {
+      const c = getConsent()
+      if (c) { setAnalytics(c.analytics); setFunctional(c.functional) }
+      setSettingsOpen(true)
     }
+    window.addEventListener('open-cookie-settings', onOpen)
+    return () => window.removeEventListener('open-cookie-settings', onOpen)
   }, [])
+
+  // Escape затваря модала с настройки
+  useEffect(() => {
+    if (!settingsOpen) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setSettingsOpen(false) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [settingsOpen])
 
   const acceptAll = () => {
     const consent: CookieConsent = {
@@ -122,16 +136,27 @@ export default function CookieBanner() {
 
       {/* Settings modal */}
       {settingsOpen && (
-        <div className="fixed inset-0 z-[101] flex items-center justify-center bg-black/60 p-4">
-          <div className="bg-white rounded-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto p-6 lg:p-8 relative">
+        <div
+          className="fixed inset-0 z-[101] flex items-center justify-center bg-black/60 p-4"
+          onClick={() => setSettingsOpen(false)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="cookie-settings-title"
+            data-lenis-prevent
+            onClick={e => e.stopPropagation()}
+            className="bg-white rounded-2xl max-w-lg w-full max-h-[85vh] overflow-y-auto p-6 lg:p-8 relative"
+          >
             <button
               onClick={() => setSettingsOpen(false)}
+              aria-label="Затвори настройките"
               className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full hover:bg-[#1A1A1A]/10 transition-colors"
             >
               <X size={18} className="text-[#1A1A1A]" />
             </button>
 
-            <h3 className="font-thin-display text-2xl lg:text-3xl text-[#1A1A1A] mb-2">
+            <h3 id="cookie-settings-title" className="font-thin-display text-2xl lg:text-3xl text-[#1A1A1A] mb-2">
               Предпочитания за бисквитки
             </h3>
             <p className="text-sm font-light text-[#1A1A1A]/60 mb-6 leading-relaxed">
@@ -147,7 +172,7 @@ export default function CookieBanner() {
                     Необходими за правилното функциониране на уебсайта.
                   </div>
                 </div>
-                <div className="w-10 h-5 bg-[#DC2626] rounded-full flex items-center justify-end px-1 cursor-not-allowed opacity-60">
+                <div role="switch" aria-checked="true" aria-disabled="true" aria-label="Задължителни бисквитки — винаги включени" className="w-10 h-5 bg-[#DC2626] rounded-full flex items-center justify-end px-1 cursor-not-allowed opacity-60">
                   <div className="w-3 h-3 bg-white rounded-full" />
                 </div>
               </div>
@@ -162,6 +187,9 @@ export default function CookieBanner() {
                 </div>
                 <button
                   onClick={() => setAnalytics(!analytics)}
+                  role="switch"
+                  aria-checked={analytics}
+                  aria-label="Аналитични бисквитки"
                   className={`w-10 h-5 rounded-full flex items-center px-1 transition-colors duration-300 ${
                     analytics ? 'bg-[#DC2626] justify-end' : 'bg-[#1A1A1A]/20 justify-start'
                   }`}
@@ -180,6 +208,9 @@ export default function CookieBanner() {
                 </div>
                 <button
                   onClick={() => setFunctional(!functional)}
+                  role="switch"
+                  aria-checked={functional}
+                  aria-label="Функционални бисквитки"
                   className={`w-10 h-5 rounded-full flex items-center px-1 transition-colors duration-300 ${
                     functional ? 'bg-[#DC2626] justify-end' : 'bg-[#1A1A1A]/20 justify-start'
                   }`}

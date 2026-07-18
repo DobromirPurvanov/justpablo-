@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router'
 import gsap from 'gsap'
 import { maskReveal } from '../lib/motion'
 
@@ -51,11 +52,25 @@ const isAnswered = (data: Record<string, unknown>, id: string) => {
   return Array.isArray(v) ? v.length > 0 : Boolean(v && String(v).trim())
 }
 
+const STORAGE_KEY = 'justpablo_inquiry_draft'
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+type FormValue = string | string[]
+type FormData = Record<string, FormValue>
+
+const asStr = (v: FormValue | undefined) => (typeof v === 'string' ? v : '')
+const asList = (v: FormValue | undefined) => (Array.isArray(v) ? v.join(', ') : '')
+
 export default function ScrollWizard() {
   const [phase, setPhase] = useState<'intro' | 'wizard'>('intro')
   const [current, setCurrent] = useState(0)
-  const [formData, setFormData] = useState<Record<string, any>>({})
+  const [formData, setFormData] = useState<FormData>(() => {
+    try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : {} } catch { return {} }
+  })
   const [isSuccess, setIsSuccess] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
+  const honeypot = useRef('')
   const rootRef = useRef<HTMLDivElement>(null)
   const animating = useRef(false)
 
@@ -64,10 +79,57 @@ export default function ScrollWizard() {
     if (el) maskReveal(el.querySelector('.wz-h1'), null, { delay: 0.1 })
   }, [phase, isSuccess])
 
-  const setValue = (id: string, value: any) => setFormData(prev => ({ ...prev, [id]: value }))
+  const setValue = (id: string, value: FormValue) => setFormData(prev => {
+    const next = { ...prev, [id]: value }
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(next)) } catch { /* без localStorage — просто не пазим чернова */ }
+    return next
+  })
   const toggleCheckbox = (id: string, option: string) => {
     const arr = (formData[id] as string[]) || []
     setValue(id, arr.includes(option) ? arr.filter(o => o !== option) : [...arr, option])
+  }
+
+  /* Изпраща запитването към serverless функцията и показва успех само след
+     потвърждение (2xx). При неуспех пази въведеното и предлага резервен канал. */
+  const submit = async () => {
+    if (!canSubmit || isSubmitting) return
+    setIsSubmitting(true)
+    setSubmitError('')
+    try {
+      const res = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...formData, company_website: honeypot.current }),
+      })
+      const data = await res.json().catch(() => null)
+      if (!res.ok || !data?.success) {
+        throw new Error(data?.error || 'Неуспешно изпращане на запитването.')
+      }
+      try { localStorage.removeItem(STORAGE_KEY) } catch { /* ignore */ }
+      setIsSuccess(true)
+    } catch (err) {
+      const human = err instanceof Error && /[а-яА-Я]/.test(err.message)
+      setSubmitError(human ? (err as Error).message : 'Неуспешно изпращане. Моля, опитайте отново или ни пишете директно.')
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  /* Резервен канал: една заявка не бива да се губи, ако сървърът е недостъпен. */
+  const mailtoFallback = () => {
+    const lines = [
+      `Име: ${asStr(formData.name)}`,
+      `Имейл: ${asStr(formData.email)}`,
+      `Телефон: ${asStr(formData.phone)}`,
+      `Дейност: ${asStr(formData.brandName)}`,
+      `Тип бранд: ${asStr(formData.brandType)}`,
+      `Фокус: ${asList(formData.focus)}`,
+      `Цели: ${asStr(formData.goals)}`,
+      `Период: ${asStr(formData.period)}`,
+      `Услуги: ${asList(formData.needs)}`,
+      `Бюджет: ${asStr(formData.budget)}`,
+    ]
+    window.location.href = `mailto:info@justpablo.bg?subject=${encodeURIComponent('Запитване от сайта')}&body=${encodeURIComponent(lines.join('\n'))}`
   }
 
   const startWizard = (brandType: string) => {
@@ -99,19 +161,20 @@ export default function ScrollWizard() {
 
   const q = questions[current]
   const isLast = current === questions.length - 1
-  const canSubmit = isAnswered(formData, 'email') && isAnswered(formData, 'name')
+  const canSubmit = isAnswered(formData, 'name') && EMAIL_RE.test(asStr(formData.email).trim())
 
   /* ─── Отговорът (вътре в кръга на desktop / плоско на мобилно) ─── */
   const answerArea = (
     <div className="w-full max-w-md mx-auto text-center">
       {q.type === 'radio' && q.options && (
-        <div className="flex flex-col items-center gap-4">
+        <div role="radiogroup" aria-label={q.title} className="flex flex-col items-center gap-4">
           {q.options.map(opt => {
             const selected = formData[q.id] === opt
             return (
               <button
                 key={opt}
-                aria-pressed={selected}
+                role="radio"
+                aria-checked={selected}
                 onClick={() => { setValue(q.id, opt); window.setTimeout(next, 300) }}
                 className="group flex items-center gap-3 text-left"
               >
@@ -130,13 +193,14 @@ export default function ScrollWizard() {
       )}
 
       {q.type === 'checkbox' && q.options && (
-        <div className="flex flex-col items-start gap-4 w-fit mx-auto">
+        <div role="group" aria-label={q.title} className="flex flex-col items-start gap-4 w-fit mx-auto">
           {q.options.map(opt => {
             const selected = ((formData[q.id] as string[]) || []).includes(opt)
             return (
               <button
                 key={opt}
-                aria-pressed={selected}
+                role="checkbox"
+                aria-checked={selected}
                 onClick={() => toggleCheckbox(q.id, opt)}
                 className="group flex items-center gap-3.5 text-left"
               >
@@ -160,11 +224,12 @@ export default function ScrollWizard() {
         <div>
           <input
             type={q.type}
-            value={formData[q.id] || ''}
+            value={asStr(formData[q.id])}
             onChange={e => setValue(q.id, e.target.value)}
             onKeyDown={e => { if (e.key === 'Enter' && !isLast) next() }}
             autoFocus
-            className="w-full bg-transparent border-b-2 border-[#DC2626] px-0 py-3 text-xl lg:text-2xl font-light text-[#1A1A1A] text-center outline-none focus-visible:outline-none"
+            aria-label={q.placeholder || q.title}
+            className="wz-input w-full bg-transparent border-b-2 border-[#DC2626] px-0 py-3 text-xl lg:text-2xl font-light text-[#1A1A1A] text-center outline-none"
           />
           <div className="text-sm font-light text-[#1A1A1A]/60 mt-3">{q.placeholder}</div>
         </div>
@@ -176,32 +241,67 @@ export default function ScrollWizard() {
             { id: 'name', type: 'text', label: 'име и фамилия' },
             { id: 'email', type: 'email', label: 'e-mail адрес' },
             { id: 'phone', type: 'tel', label: 'телефон' },
-          ].map((f, i) => (
-            <div key={f.id}>
-              <input
-                type={f.type}
-                value={formData[f.id] || ''}
-                onChange={e => setValue(f.id, e.target.value)}
-                autoFocus={i === 0}
-                className="w-full bg-transparent border-b-2 border-[#DC2626] px-0 py-2 text-lg font-light text-[#1A1A1A] text-center outline-none focus-visible:outline-none"
-              />
-              <div className="text-xs font-light text-[#1A1A1A]/60 mt-2 text-center">{f.label}</div>
-            </div>
-          ))}
+          ].map((f, i) => {
+            const invalid = f.id === 'email' && asStr(formData.email).trim() !== '' && !EMAIL_RE.test(asStr(formData.email).trim())
+            return (
+              <div key={f.id}>
+                <input
+                  type={f.type}
+                  value={asStr(formData[f.id])}
+                  onChange={e => setValue(f.id, e.target.value)}
+                  onKeyDown={e => { if (e.key === 'Enter' && canSubmit) submit() }}
+                  autoFocus={i === 0}
+                  required={f.id !== 'phone'}
+                  aria-label={f.label}
+                  aria-invalid={invalid || undefined}
+                  className="wz-input w-full bg-transparent border-b-2 border-[#DC2626] px-0 py-2 text-lg font-light text-[#1A1A1A] text-center outline-none"
+                />
+                <div className={`text-xs font-light mt-2 text-center ${invalid ? 'text-[#DC2626]' : 'text-[#1A1A1A]/60'}`}>
+                  {invalid ? 'Невалиден e-mail адрес' : f.label}
+                </div>
+              </div>
+            )
+          })}
+          {/* Honeypot: скрито поле срещу ботове — истинските хора не го виждат. */}
+          <input
+            type="text"
+            tabIndex={-1}
+            autoComplete="off"
+            aria-hidden="true"
+            onChange={e => { honeypot.current = e.target.value }}
+            className="absolute -left-[9999px] w-px h-px opacity-0"
+          />
         </div>
       )}
 
       {isLast && !canSubmit && (
-        <p className="text-xs font-light text-[#1A1A1A]/50 mt-6">Име и e-mail са задължителни.</p>
+        <p className="text-xs font-light text-[#1A1A1A]/50 mt-6">Име и валиден e-mail са задължителни.</p>
+      )}
+
+      {isLast && submitError && (
+        <div className="mt-6" role="alert">
+          <p className="text-sm font-medium text-[#DC2626]">{submitError}</p>
+          <button onClick={mailtoFallback} className="mt-2 text-xs font-light text-[#1A1A1A]/70 underline hover:text-[#DC2626] transition-colors">
+            Изпрати ни данните по имейл вместо това
+          </button>
+        </div>
+      )}
+
+      {isLast && (
+        <p className="text-[11px] font-light text-[#1A1A1A]/50 mt-6 max-w-xs mx-auto leading-relaxed">
+          Изпращайки формата, се съгласявате с обработката на данните ви съгласно{' '}
+          <Link to="/poveritelnost" className="underline hover:text-[#DC2626] transition-colors">Политиката за поверителност</Link>.
+        </p>
       )}
 
       {isLast && (
         <button
-          onClick={() => canSubmit && setIsSuccess(true)}
-          disabled={!canSubmit}
-          className={`mt-8 inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-medium transition-all duration-300 ${canSubmit ? 'bg-[#DC2626] text-white hover:bg-[#B91C1C] hover:scale-[1.03]' : 'bg-[#1A1A1A]/10 text-[#1A1A1A]/40 cursor-not-allowed'}`}
+          onClick={submit}
+          disabled={!canSubmit || isSubmitting}
+          aria-busy={isSubmitting}
+          className={`mt-8 inline-flex items-center gap-2 px-8 py-3.5 rounded-full text-sm font-medium transition-all duration-300 ${canSubmit && !isSubmitting ? 'bg-[#DC2626] text-white hover:bg-[#B91C1C] hover:scale-[1.03]' : 'bg-[#1A1A1A]/10 text-[#1A1A1A]/40 cursor-not-allowed'}`}
         >
-          Изпрати запитване
+          {isSubmitting ? 'Изпращане…' : 'Изпрати запитване'}
         </button>
       )}
     </div>
@@ -218,10 +318,10 @@ export default function ScrollWizard() {
         <p className="text-base font-light text-[#1A1A1A]/60 max-w-md mb-10">
           Получихме запитването ви. Ще се запознаем с детайлите и ще се свържем с вас в рамките на 24 часа.
         </p>
-        <a href="#/" className="inline-flex items-center gap-2 text-sm uppercase tracking-[0.14em] font-medium text-[#DC2626] hover:gap-3 transition-all duration-300">
+        <Link to="/" className="inline-flex items-center gap-2 text-sm uppercase tracking-[0.14em] font-medium text-[#DC2626] hover:gap-3 transition-all duration-300">
           Обратно към началото
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" /></svg>
-        </a>
+        </Link>
       </div>
     )
   }
@@ -271,6 +371,10 @@ export default function ScrollWizard() {
   /* ─── Wizard: активен въпрос + призрачни идващи + кръгът сцена ─── */
   return (
     <div ref={rootRef} className="bg-white min-h-[92vh] py-8 lg:py-10 overflow-x-clip">
+      {/* Известяване за екранни четци при смяна на стъпка */}
+      <p className="sr-only" role="status" aria-live="polite">
+        {`Стъпка ${current + 1} от ${questions.length}: ${q.title}`}
+      </p>
       <div className="section-padding">
         <div className="container-max">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">

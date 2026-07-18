@@ -12,6 +12,9 @@ export default function HeroSection() {
   const circleRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
+    // При намалено движение показваме hero-то веднага (без entrance),
+    // за да не стои заглавието скрито под маската — важно и за LCP.
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const tl = gsap.timeline({ delay: 0.2 })
     const lines = titleRef.current?.querySelectorAll('.hero-line')
     if (lines) {

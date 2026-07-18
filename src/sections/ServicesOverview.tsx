@@ -3,6 +3,7 @@ import { Link } from 'react-router'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { maskReveal, reveal } from '../lib/motion'
+import { scrollToY } from '../lib/scroll'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -119,7 +120,7 @@ export default function ServicesOverview() {
     const st = stRef.current
     if (!st) return
     const target = st.start + (i / (pillars.length - 1)) * (st.end - st.start) + 2
-    window.scrollTo({ top: target, behavior: 'smooth' })
+    scrollToY(target)
   }
 
   return (

@@ -1,24 +1,28 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, lazy, Suspense } from 'react'
 import { Routes, Route, useLocation } from 'react-router'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Home from './pages/Home'
-import AboutPage from './pages/AboutPage'
-import Services from './pages/Services'
-import Results from './pages/Results'
-import Strategy from './pages/Strategy'
-import DigitalAnalysis from './pages/DigitalAnalysis'
-import Pricing from './pages/Pricing'
-import Contact from './pages/Contact'
-import CookiesPage from './pages/CookiesPage'
-import PrivacyPage from './pages/PrivacyPage'
-import TermsPage from './pages/TermsPage'
-import NotFoundPage from './pages/NotFoundPage'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
 import CookieBanner from './components/CookieBanner'
 import SmoothScroll from './components/SmoothScroll'
 import CustomCursor from './components/CustomCursor'
+import { applyRouteMeta } from './lib/meta'
+
+// Началната страница (LCP) се зарежда веднага; останалите се разделят на
+// отделни chunk-ове и се зареждат при нужда, за да олекне първоначалният JS.
+const AboutPage = lazy(() => import('./pages/AboutPage'))
+const Services = lazy(() => import('./pages/Services'))
+const Results = lazy(() => import('./pages/Results'))
+const Strategy = lazy(() => import('./pages/Strategy'))
+const DigitalAnalysis = lazy(() => import('./pages/DigitalAnalysis'))
+const Pricing = lazy(() => import('./pages/Pricing'))
+const Contact = lazy(() => import('./pages/Contact'))
+const CookiesPage = lazy(() => import('./pages/CookiesPage'))
+const PrivacyPage = lazy(() => import('./pages/PrivacyPage'))
+const TermsPage = lazy(() => import('./pages/TermsPage'))
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'))
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -62,6 +66,11 @@ function AnimatedRoutes() {
       .set(c, { autoAlpha: 0 })
   }, [location, displayLoc])
 
+  // SEO мета за текущия маршрут (SPA — index.html носи само началната страница).
+  useEffect(() => {
+    applyRouteMeta(location.pathname)
+  }, [location.pathname])
+
   return (
     <>
       <div
@@ -71,20 +80,22 @@ function AnimatedRoutes() {
       >
         <img src="/images/logo-mark-white.png" alt="" className="w-14 h-14 opacity-70" />
       </div>
-      <Routes location={displayLoc}>
-        <Route path="/" element={<Home />} />
-        <Route path="/za-nas" element={<AboutPage />} />
-        <Route path="/uslugi" element={<Services />} />
-        <Route path="/rezultati" element={<Results />} />
-        <Route path="/strategiya" element={<Strategy />} />
-        <Route path="/analiz" element={<DigitalAnalysis />} />
-        <Route path="/ceni" element={<Pricing />} />
-        <Route path="/zapitvane" element={<Contact />} />
-        <Route path="/biskvitki" element={<CookiesPage />} />
-        <Route path="/poveritelnost" element={<PrivacyPage />} />
-        <Route path="/usloviya" element={<TermsPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
+      <Suspense fallback={<div className="min-h-screen bg-white" />}>
+        <Routes location={displayLoc}>
+          <Route path="/" element={<Home />} />
+          <Route path="/za-nas" element={<AboutPage />} />
+          <Route path="/uslugi" element={<Services />} />
+          <Route path="/rezultati" element={<Results />} />
+          <Route path="/strategiya" element={<Strategy />} />
+          <Route path="/analiz" element={<DigitalAnalysis />} />
+          <Route path="/ceni" element={<Pricing />} />
+          <Route path="/zapitvane" element={<Contact />} />
+          <Route path="/biskvitki" element={<CookiesPage />} />
+          <Route path="/poveritelnost" element={<PrivacyPage />} />
+          <Route path="/usloviya" element={<TermsPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Suspense>
     </>
   )
 }
@@ -93,8 +104,14 @@ export default function App() {
   return (
     <SmoothScroll>
     <div className="min-h-screen bg-white">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[200] focus:bg-[#1A1A1A] focus:text-white focus:px-4 focus:py-2 focus:rounded-full focus:text-sm"
+      >
+        Към съдържанието
+      </a>
       <Navbar />
-      <main>
+      <main id="main-content">
         <AnimatedRoutes />
       </main>
       <Footer />

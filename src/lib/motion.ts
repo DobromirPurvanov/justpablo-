@@ -5,6 +5,11 @@ gsap.registerPlugin(ScrollTrigger)
 
 export const EASE = 'power3.out'
 
+/** Уважава системното предпочитание за намалено движение. */
+const prefersReduced = () =>
+  typeof window !== 'undefined' &&
+  window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
 type RevealOpts = {
   y?: number
   scale?: number
@@ -20,6 +25,7 @@ type RevealOpts = {
  * clearProps маха inline transform-а след края, за да не пречи на hover ефектите.
  */
 export function reveal(targets: gsap.TweenTarget, trigger: Element | null, opts: RevealOpts = {}) {
+  if (prefersReduced()) { gsap.set(targets, { opacity: 1, clearProps: 'transform' }); return }
   return gsap.from(targets, {
     y: opts.y ?? 28,
     scale: opts.scale ?? 1,
@@ -48,22 +54,6 @@ export function drift(target: gsap.TweenTarget, trigger: Element, opts: { from?:
       { y: opts.from ?? 40 },
       {
         y: opts.to ?? -40,
-        ease: 'none',
-        scrollTrigger: { trigger, start: 'top bottom', end: 'bottom top', scrub: opts.scrub ?? 1 },
-      }
-    )
-  })
-  return mm
-}
-
-/** Хоризонтален дрифт (голямото "digital") */
-export function driftX(target: gsap.TweenTarget, trigger: Element, opts: { from?: number; to?: number; scrub?: number } = {}) {
-  const mm = gsap.matchMedia()
-  mm.add(PARALLAX_MEDIA, () => {
-    gsap.fromTo(target,
-      { x: opts.from ?? -40 },
-      {
-        x: opts.to ?? 40,
         ease: 'none',
         scrollTrigger: { trigger, start: 'top bottom', end: 'bottom top', scrub: opts.scrub ?? 1 },
       }
@@ -127,6 +117,7 @@ export function splitWords(root: Element): HTMLElement[] {
 /** Думите "просветват" една по една, докато параграфът минава през екрана.
     Извиква се само при включени анимации — иначе текстът си е нормален. */
 export function wordsReveal(paragraph: Element) {
+  if (prefersReduced()) return
   const words = splitWords(paragraph)
   if (!words.length) return
   gsap.fromTo(words,
@@ -145,8 +136,9 @@ export function wordsReveal(paragraph: Element) {
     Стойности без водеща цифра (напр. "x3") остават статични. */
 export function countUp(el: Element, opts: { delay?: number; duration?: number; trigger?: Element | null } = {}) {
   const raw = el.textContent ?? ''
-  const m = raw.match(/^([+\-]?)(\d+)([\s\S]*)$/)
+  const m = raw.match(/^([+-]?)(\d+)([\s\S]*)$/)
   if (!m) return
+  if (prefersReduced()) return
   const [, prefix, numStr, suffix] = m
   const target = parseInt(numStr, 10)
   const state = { v: 0 }
@@ -165,6 +157,7 @@ export function countUp(el: Element, opts: { delay?: number; duration?: number; 
     съдържанието се плъзга нагоре иззад невидим ръб. Идемпотентно. */
 export function maskReveal(target: Element | null, trigger: Element | null, opts: { delay?: number; duration?: number; start?: string } = {}) {
   if (!target) return
+  if (prefersReduced()) return
   let inner = target.querySelector(':scope > .mask-inner') as HTMLElement | null
   if (!inner) {
     inner = document.createElement('div')

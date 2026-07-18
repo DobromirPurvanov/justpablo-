@@ -21,16 +21,30 @@ export default function Navbar() {
   const overlayRef = useRef<HTMLDivElement>(null)
   const firstRender = useRef(true)
 
-  useEffect(() => {
-    setMenuOpen(false)
-  }, [location.pathname])
-
   // Escape затваря менюто
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setMenuOpen(false) }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [])
+
+  // Клавиатурен focus trap, докато менюто е отворено
+  useEffect(() => {
+    if (!menuOpen) return
+    const ov = overlayRef.current
+    if (!ov) return
+    const focusables = Array.from(ov.querySelectorAll<HTMLElement>('a[href], button'))
+    focusables[0]?.focus()
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Tab' || !focusables.length) return
+      const first = focusables[0]
+      const last = focusables[focusables.length - 1]
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus() }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus() }
+    }
+    ov.addEventListener('keydown', onKey)
+    return () => ov.removeEventListener('keydown', onKey)
+  }, [menuOpen])
 
   useEffect(() => {
     const ov = overlayRef.current
@@ -74,6 +88,7 @@ export default function Navbar() {
       <div className="fixed top-5 right-5 lg:right-8 z-50 flex items-center gap-3">
         <Link
           to="/zapitvane"
+          onClick={() => setMenuOpen(false)}
           className={`hidden lg:inline-flex items-center bg-[#DC2626] text-white text-[11px] uppercase tracking-[0.14em] font-medium px-5 py-3 rounded-full shadow-lg shadow-[#DC2626]/20 hover:bg-[#B91C1C] hover:scale-[1.03] transition-all duration-300 ${
             menuOpen || location.pathname === '/zapitvane' ? 'opacity-0 pointer-events-none' : 'opacity-100'
           }`}
@@ -84,6 +99,8 @@ export default function Navbar() {
         <button
           onClick={() => setMenuOpen(!menuOpen)}
           aria-label={menuOpen ? 'Затвори менюто' : 'Отвори менюто'}
+          aria-expanded={menuOpen}
+          aria-controls="main-menu"
           className="group flex items-center gap-3"
         >
           <span
@@ -97,7 +114,7 @@ export default function Navbar() {
       </div>
 
       {/* Меню — цял екран, спуска се отгоре */}
-      <div ref={overlayRef} aria-hidden={!menuOpen} className="fixed inset-0 z-40 bg-white flex flex-col will-change-transform">
+      <div ref={overlayRef} id="main-menu" role="dialog" aria-modal="true" aria-label="Основно меню" aria-hidden={!menuOpen} className="fixed inset-0 z-40 bg-white flex flex-col will-change-transform">
         <div className="flex-1 flex items-center">
           <div className="section-padding w-full">
             <div className="container-max">
@@ -108,6 +125,7 @@ export default function Navbar() {
                     <Link
                       key={link.path}
                       to={link.path}
+                      onClick={() => setMenuOpen(false)}
                       className={`menu-item text-lg lg:text-[21px] uppercase tracking-[0.2em] transition-colors duration-300 ${
                         active
                           ? 'text-[#1A1A1A] underline underline-offset-[10px] decoration-[1.5px]'
@@ -128,7 +146,7 @@ export default function Navbar() {
           <div className="section-padding py-6">
             <div className="container-max flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm font-light">
               <div className="flex items-center gap-6">
-                <a href="mailto:info@justpablo.bg" className="text-[#DC2626] hover:text-white transition-colors">info@justpablo.bg</a>
+                <a href="mailto:info@justpablo.bg" className="text-[#DC2626] hover:text-[#B91C1C] transition-colors">info@justpablo.bg</a>
                 <a href="tel:0887654321" className="text-[#1A1A1A]/60 hover:text-[#1A1A1A] transition-colors">0887 654 321</a>
               </div>
               <div className="text-[#1A1A1A]/55 text-xs uppercase tracking-[0.15em]">Варна — ул. Мария Луиза 47</div>

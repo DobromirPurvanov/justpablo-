@@ -22,12 +22,17 @@ export default function CustomCursor() {
     const yTo = gsap.quickTo(dot, 'y', { duration: 0.35, ease: 'power3' })
 
     const move = (e: MouseEvent) => { xTo(e.clientX); yTo(e.clientY) }
+    // Пускаме tween само при реална смяна на състоянието (влизане/излизане
+    // от елемент с data-cursor), а не при всяко пресичане на mouseover.
+    let active = false
     const over = (e: MouseEvent) => {
       const target = (e.target as Element).closest?.('[data-cursor]')
       if (target) {
-        setLabel(target.getAttribute('data-cursor') || '')
-        gsap.to(dot, { scale: 1, duration: 0.35, ease: 'power3.out' })
-      } else {
+        const next = target.getAttribute('data-cursor') || ''
+        setLabel(prev => (prev === next ? prev : next))
+        if (!active) { active = true; gsap.to(dot, { scale: 1, duration: 0.35, ease: 'power3.out' }) }
+      } else if (active) {
+        active = false
         gsap.to(dot, { scale: 0, duration: 0.3, ease: 'power3.out' })
       }
     }

@@ -126,8 +126,8 @@ export default function Pricing() {
                   <div className="flex flex-col gap-2.5 mb-8">
                     {plan.features.map(f => (
                       <div key={f} className="flex items-start gap-3">
-                        <Check size={14} className="text-[#9BFF00] shrink-0 mt-0.5" />
-                        <span className="text-xs font-light text-[#1A1A1A]/50">{f}</span>
+                        <Check size={14} className="text-[#4D7C0F] shrink-0 mt-0.5" />
+                        <span className="text-xs font-light text-[#1A1A1A]/70">{f}</span>
                       </div>
                     ))}
                   </div>

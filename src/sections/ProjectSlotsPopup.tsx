@@ -22,8 +22,22 @@ export default function ProjectSlotsPopup() {
     return () => clearTimeout(timer)
   }, [])
 
+  // Escape затваря popup-а
+  useEffect(() => {
+    if (!isOpen) return
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setIsOpen(false) }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [isOpen])
+
   const open = () => setIsOpen(true)
   const close = () => setIsOpen(false)
+
+  // Текущият месец на български (вместо хардкодната дата)
+  const monthLabel = (() => {
+    const s = new Date().toLocaleDateString('bg-BG', { month: 'long', year: 'numeric' })
+    return s.charAt(0).toUpperCase() + s.slice(1)
+  })()
 
   return (
     <>
@@ -66,12 +80,17 @@ export default function ProjectSlotsPopup() {
 
           {/* Modal */}
           <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="slots-popup-title"
+            data-lenis-prevent
             className="relative bg-white rounded-3xl w-full max-w-2xl max-h-[85vh] overflow-y-auto shadow-2xl animate-in fade-in zoom-in-95 duration-300"
             onClick={e => e.stopPropagation()}
           >
             {/* Close button */}
             <button
               onClick={close}
+              aria-label="Затвори"
               className="absolute top-4 right-4 w-10 h-10 bg-[#F5F5F5] hover:bg-[#DC2626] rounded-full flex items-center justify-center text-[#1A1A1A] hover:text-white transition-all z-10"
             >
               <X size={18} />
@@ -85,9 +104,9 @@ export default function ProjectSlotsPopup() {
                 </div>
                 <div>
                   <span className="text-xs font-semibold text-[#DC2626] tracking-wider uppercase block">
-                    Май 2026
+                    {monthLabel}
                   </span>
-                  <h2 className="font-thin-display text-3xl lg:text-4xl text-[#1A1A1A] leading-tight">
+                  <h2 id="slots-popup-title" className="font-thin-display text-3xl lg:text-4xl text-[#1A1A1A] leading-tight">
                     Ограничен брой места 5
                   </h2>
                 </div>

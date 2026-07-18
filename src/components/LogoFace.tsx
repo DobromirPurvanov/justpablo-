@@ -32,8 +32,12 @@ export default function LogoFace({ className = '' }: { className?: string }) {
     const fine = window.matchMedia('(pointer: fine)').matches
     let idle: gsap.core.Timeline | undefined
 
+    // Кешираме правоъгълника и го опресняваме само при скрол/ресайз, вместо
+    // да четем geometry на всеки mousemove (което форсира reflow).
+    let rect = root.getBoundingClientRect()
+    const refreshRect = () => { rect = root.getBoundingClientRect() }
+
     const move = (e: MouseEvent) => {
-      const rect = root.getBoundingClientRect()
       const maxX = rect.width * TRAVEL_X
       const maxY = rect.width * TRAVEL_Y
       pupils.forEach((_, i) => {
@@ -51,6 +55,8 @@ export default function LogoFace({ className = '' }: { className?: string }) {
 
     if (fine) {
       window.addEventListener('mousemove', move, { passive: true })
+      window.addEventListener('scroll', refreshRect, { passive: true })
+      window.addEventListener('resize', refreshRect)
       document.documentElement.addEventListener('mouseleave', recenter)
     } else {
       // Touch: автономно оглеждане
@@ -76,6 +82,8 @@ export default function LogoFace({ className = '' }: { className?: string }) {
       window.clearTimeout(blinkTimer)
       idle?.kill()
       window.removeEventListener('mousemove', move)
+      window.removeEventListener('scroll', refreshRect)
+      window.removeEventListener('resize', refreshRect)
       document.documentElement.removeEventListener('mouseleave', recenter)
     }
   }, [])

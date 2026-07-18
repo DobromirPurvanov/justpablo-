@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { Link } from 'react-router'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { clipReveal, countUp, drift, imageParallax, reveal } from '../lib/motion'
@@ -23,7 +24,7 @@ const projects: Project[] = [
     category: 'Авточасти / E-commerce',
     services: ['SEO', 'Уеб дизайн', 'Реклама', 'Анализи'],
     years: '2021 – до сега',
-    image: './images/case-ecommerce.jpg',
+    image: '/images/case-ecommerce.jpg',
     growth: '+420%',
   },
   {
@@ -32,7 +33,7 @@ const projects: Project[] = [
     category: 'Инвестиции',
     services: ['Брандинг', 'Уеб дизайн', 'SEO', 'Съдържание'],
     years: '2022 – до сега',
-    image: './images/case-b2b.jpg',
+    image: '/images/case-b2b.jpg',
     growth: '+315%',
   },
   {
@@ -41,7 +42,7 @@ const projects: Project[] = [
     category: 'Бизнес консултации',
     services: ['Стратегия', 'SEO', 'Реклама', 'Socials'],
     years: '2020 – до сега',
-    image: './images/case-local.jpg',
+    image: '/images/case-local.jpg',
     growth: 'x3',
   },
   {
@@ -50,7 +51,7 @@ const projects: Project[] = [
     category: 'Строителство',
     services: ['SEO', 'Уеб дизайн', 'Фотография', 'Реклама'],
     years: '2019 – до сега',
-    image: './images/case-content.jpg',
+    image: '/images/case-content.jpg',
     growth: '+580%',
   },
   {
@@ -59,7 +60,7 @@ const projects: Project[] = [
     category: 'E-commerce',
     services: ['SEO', 'Реклама', 'Дизайн', 'Анализи'],
     years: '2021 – до сега',
-    image: './images/hero-mockup.jpg',
+    image: '/images/hero-mockup.jpg',
     growth: '100%',
   },
 ]
@@ -105,7 +106,7 @@ function PortfolioItem({ project }: { project: Project }) {
       </div>
 
       {/* Медия */}
-      <div className="pi-media group cursor-pointer" data-cursor="Виж проекта">
+      <Link to="/rezultati" aria-label={`Виж проекта ${project.name}`} className="pi-media group cursor-pointer block" data-cursor="Виж проекта">
         <div className="pc-frame relative overflow-hidden rounded-lg bg-[#F5F5F5] aspect-video shadow-sm group-hover:shadow-2xl transition-shadow duration-500">
           <div className="pc-imgwrap absolute inset-0 scale-[1.15] will-change-transform">
             {project.video ? (
@@ -121,7 +122,7 @@ function PortfolioItem({ project }: { project: Project }) {
             ) : (
               <img
                 src={project.image}
-                alt={project.name}
+                alt={`${project.name} — ${project.category}`}
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
@@ -150,7 +151,7 @@ function PortfolioItem({ project }: { project: Project }) {
             </span>
           </div>
         </div>
-      </div>
+      </Link>
 
       {/* Голямото изречение + резултатът */}
       <div className="flex items-end justify-between gap-6 mt-5">
